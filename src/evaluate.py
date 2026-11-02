@@ -14,16 +14,19 @@ RESULTS = ROOT / "results"
 BASE_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 MODEL_PATHS = {
-    "issuedupes": {
-        "pretrained": BASE_MODEL,
-        "pilot": ROOT / "models" / "issuedupes_minilm_pilot" / "final",
-        "1epoch": ROOT / "models" / "issuedupes_minilm_1epoch" / "final",
-    },
-    "eclipse": {
     "pretrained": BASE_MODEL,
-    "pilot": ROOT / "models" / "eclipse_minilm_pilot" / "final",
-    "1epoch": ROOT / "models" / "eclipse_minilm_1epoch" / "final",
-},
+
+    "issuedupes-pilot": (
+        ROOT / "models" / "issuedupes_minilm_pilot" / "final"
+    ),
+
+    "issuedupes-1epoch": (
+        ROOT / "models" / "issuedupes_minilm_1epoch" / "final"
+    ),
+
+    "eclipse-pilot": (
+        ROOT / "models" / "eclipse_minilm_pilot" / "final"
+    ),
 }
 
 DATASET_FILES = {
@@ -38,7 +41,7 @@ DATASET_FILES = {
 }
 
 
-def prepare_validation(dataset):
+def prepare_benchmark(dataset, split="validation"):
     files = DATASET_FILES[dataset]
 
     issues = pd.read_csv(
@@ -78,14 +81,27 @@ def prepare_validation(dataset):
         issues["created_at"] < outer_cutoff
     ].copy().reset_index(drop=True)
 
-    inner_idx = int(len(training_period) * 0.85)
-    inner_cutoff = training_period.iloc[inner_idx]["created_at"]
+    if split == "validation":
+        benchmark_issues = training_period
 
-    validation = training_period[
-        training_period["created_at"] >= inner_cutoff
-    ].copy()
+        inner_idx = int(len(training_period) * 0.85)
+        inner_cutoff = training_period.iloc[inner_idx]["created_at"]
 
-    valid_ids = set(training_period["issue_id"])
+        queries = training_period[
+            training_period["created_at"] >= inner_cutoff
+        ].copy()
+
+    elif split == "test":
+        benchmark_issues = issues
+
+        queries = issues[
+            issues["created_at"] >= outer_cutoff
+        ].copy()
+
+    else:
+        raise ValueError(f"Unsupported split: {split}")
+
+    valid_ids = set(benchmark_issues["issue_id"])
     adjacency = {}
 
     for source, target in links[
@@ -102,13 +118,13 @@ def prepare_validation(dataset):
         adjacency.setdefault(source, set()).add(target)
         adjacency.setdefault(target, set()).add(source)
 
-    created_lookup = training_period.set_index(
+    created_lookup = benchmark_issues.set_index(
         "issue_id"
     )["created_at"].to_dict()
 
     relevant = {}
 
-    for row in validation.itertuples(index=False):
+    for row in queries.itertuples(index=False):
         earlier = {
             other
             for other in adjacency.get(row.issue_id, set())
@@ -118,11 +134,12 @@ def prepare_validation(dataset):
         if earlier:
             relevant[row.issue_id] = earlier
 
-    eligible = validation[
-        validation["issue_id"].isin(relevant)
+    eligible = queries[
+        queries["issue_id"].isin(relevant)
     ].copy()
 
-    return training_period, validation, eligible, relevant
+    return benchmark_issues, queries, eligible, relevant
+
 
 
 def evaluate_retrieval(issues, eligible, relevant, embeddings):
@@ -201,13 +218,13 @@ def evaluate_retrieval(issues, eligible, relevant, embeddings):
         "MRR": float(np.mean(1.0 / ranks)),
     }
 
-def load_model(dataset, model_name):
-    model_path = MODEL_PATHS[dataset].get(model_name)
+
+def load_model(model_name):
+    model_path = MODEL_PATHS.get(model_name)
 
     if model_path is None:
         raise ValueError(
-            f"Model '{model_name}' is not configured "
-            f"for dataset '{dataset}'."
+            f"Model '{model_name}' is not configured."
         )
 
     if isinstance(model_path, Path) and not model_path.is_dir():
@@ -229,6 +246,8 @@ def load_model(dataset, model_name):
 
 
 
+
+
 def main(args):
     print("=" * 55)
     print("Duplicate Bug Report Retrieval Evaluation")
@@ -236,23 +255,22 @@ def main(args):
 
     print("Dataset:", args.dataset)
     print("Model:", args.model)
-    print("Evaluation split: validation")
+    print("Evaluation split:", args.split)
 
-    issues, validation, eligible, relevant = prepare_validation(
-        args.dataset
+    issues, queries, eligible, relevant = prepare_benchmark(
+        args.dataset,
+        args.split,
     )
 
     print("\nBenchmark statistics")
-    print("Training-period reports:", len(issues))
-    print("Validation reports:", len(validation))
-    print("Eligible validation queries:", len(eligible))
+    print("Available reports:", len(issues))
+    print("Query-period reports:", len(queries))
+    print("Eligible queries:", len(eligible))
 
     if not len(eligible):
-        raise ValueError(
-            "No eligible validation queries found."
-        )
+        raise ValueError("No eligible queries found.")
 
-    model = load_model(args.dataset, args.model)
+    model = load_model(args.model)
 
     print("\nGenerating embeddings...")
 
@@ -267,7 +285,9 @@ def main(args):
     print("Embedding shape:", embeddings.shape)
 
     if embeddings.shape[0] != len(issues):
-        raise ValueError("Embedding count does not match issue count.")
+        raise ValueError(
+            "Embedding count does not match issue count."
+        )
 
     print("\nEvaluating retrieval...")
 
@@ -291,13 +311,13 @@ def main(args):
 
     output_path = (
         RESULTS
-        / f"{args.dataset}_{args.model}_validation.csv"
+        / f"{args.dataset}_{args.model}_{args.split}.csv"
     )
 
     results_row = {
         "Dataset": args.dataset,
         "Model": args.model,
-        "Split": "validation",
+        "Split": args.split,
         **results,
     }
 
@@ -318,21 +338,24 @@ if __name__ == "__main__":
         "--dataset",
         choices=["issuedupes", "eclipse"],
         required=True,
-        help="Dataset to evaluate.",
     )
 
     parser.add_argument(
         "--model",
-        choices=["pretrained", "pilot", "1epoch"],
+        choices=list(MODEL_PATHS.keys()),
         required=True,
-        help="Model checkpoint to evaluate.",
+    )
+
+    parser.add_argument(
+        "--split",
+        choices=["validation", "test"],
+        default="validation",
     )
 
     parser.add_argument(
         "--batch-size",
         type=int,
         default=16,
-        help="Sentence-BERT inference batch size.",
     )
 
     main(parser.parse_args())
