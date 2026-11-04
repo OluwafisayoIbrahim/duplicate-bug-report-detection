@@ -137,7 +137,7 @@ def evaluate_retrieval(issues, eligible, relevant, embeddings):
         for idx, issue_id in enumerate(issue_ids)
     }
 
-    ranks = []
+    query_results = []
 
     for query in tqdm(
         eligible.itertuples(index=False),
@@ -153,7 +153,9 @@ def evaluate_retrieval(issues, eligible, relevant, embeddings):
         )
 
         if cutoff == 0:
-            continue
+            raise ValueError(
+                f"No earlier candidates for {query.issue_id}"
+            )
 
         scores = np.asarray(
             embeddings[:cutoff] @ embeddings[query_idx]
@@ -167,7 +169,7 @@ def evaluate_retrieval(issues, eligible, relevant, embeddings):
 
         if not relevant_indices:
             raise ValueError(
-                f"No eligible relevant report for {query.issue_id}"
+                f"No relevant candidate for {query.issue_id}"
             )
 
         best_score = max(
@@ -175,34 +177,56 @@ def evaluate_retrieval(issues, eligible, relevant, embeddings):
         )
 
         best_idx = min(
-            idx
-            for idx in relevant_indices
+            idx for idx in relevant_indices
             if scores[idx] == best_score
         )
 
-        rank = (
+        rank = int(
             np.count_nonzero(scores > best_score)
             + np.count_nonzero(scores[:best_idx] == best_score)
             + 1
         )
 
-        ranks.append(rank)
+        top_idx = int(np.argmax(scores))
 
-    ranks = np.asarray(ranks)
+        query_results.append({
+            "query_id": query.issue_id,
+            "query_created_at": query.created_at,
+            "first_relevant_rank": rank,
+            "hit_at_1": int(rank <= 1),
+            "hit_at_5": int(rank <= 5),
+            "hit_at_10": int(rank <= 10),
+            "reciprocal_rank": 1.0 / rank,
+            "top_candidate_id": issue_ids[top_idx],
+            "top_candidate_score": float(scores[top_idx]),
+            "relevant_count": len(relevant_indices),
+            "candidate_count": int(cutoff),
+        })
 
-    if len(ranks) == 0:
+    query_df = pd.DataFrame(query_results)
+
+    if query_df.empty:
         raise ValueError("No eligible queries were evaluated.")
 
-    return {
-        "Queries": len(ranks),
-        "Hit@1": float(np.mean(ranks <= 1)),
-        "Hit@5": float(np.mean(ranks <= 5)),
-        "Hit@10": float(np.mean(ranks <= 10)),
-        "MRR": float(np.mean(1.0 / ranks)),
+    metrics = {
+        "Queries": len(query_df),
+        "Hit@1": float(query_df["hit_at_1"].mean()),
+        "Hit@5": float(query_df["hit_at_5"].mean()),
+        "Hit@10": float(query_df["hit_at_10"].mean()),
+        "MRR": float(query_df["reciprocal_rank"].mean()),
     }
 
+<<<<<<< Updated upstream
 def load_model(dataset, model_name):
     model_path = MODEL_PATHS[dataset].get(model_name)
+=======
+    return metrics, query_df
+
+
+
+def load_model(model_name):
+    model_path = MODEL_PATHS.get(model_name)
+>>>>>>> Stashed changes
 
     if model_path is None:
         raise ValueError(
@@ -271,7 +295,7 @@ def main(args):
 
     print("\nEvaluating retrieval...")
 
-    results = evaluate_retrieval(
+    results, query_results = evaluate_retrieval(
         issues=issues,
         eligible=eligible,
         relevant=relevant,
@@ -307,6 +331,18 @@ def main(args):
     )
 
     print("\nResults saved to:", output_path)
+
+    query_output_path = (
+        RESULTS
+        / f"{args.dataset}_{args.model}_{args.split}_queries.csv"
+    )
+
+    query_results.to_csv(
+        query_output_path,
+        index=False,
+    )
+
+    print("\nPer-query results saved to:", query_output_path)
 
 
 if __name__ == "__main__":
