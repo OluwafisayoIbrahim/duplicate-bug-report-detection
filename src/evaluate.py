@@ -216,24 +216,18 @@ def evaluate_retrieval(issues, eligible, relevant, embeddings):
         "MRR": float(query_df["reciprocal_rank"].mean()),
     }
 
-<<<<<<< Updated upstream
-def load_model(dataset, model_name):
-    model_path = MODEL_PATHS[dataset].get(model_name)
-=======
     return metrics, query_df
 
 
 
 def load_model(model_name):
     model_path = MODEL_PATHS.get(model_name)
->>>>>>> Stashed changes
 
     if model_path is None:
         raise ValueError(
             f"Model '{model_name}' is not configured "
             f"for dataset '{dataset}'."
         )
-
     if isinstance(model_path, Path) and not model_path.is_dir():
         raise FileNotFoundError(
             f"Model checkpoint not found: {model_path}"
