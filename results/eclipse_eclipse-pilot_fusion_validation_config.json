@@ -1,0 +1,18 @@
+{
+  "dataset": "eclipse",
+  "model": "eclipse-pilot",
+  "split": "validation",
+  "rrf_k": 60,
+  "weights": [
+    0.5,
+    0.7,
+    0.85,
+    0.95
+  ],
+  "top_ns": [
+    0,
+    50,
+    200
+  ],
+  "best_by_validation_mrr": "full_w85"
+}
