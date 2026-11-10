@@ -1,0 +1,481 @@
+outcome,query_id,minilm_rank,hybrid_rank,rank_change,mrr_change,query_text,earlier_direct_duplicates,example_duplicate_id,example_duplicate_text
+improved,gohugoio/hugo#9327,3,1,2,0.6666666666666667,"Permalink configuration allowing directory structure
+There seems to be no way to reflect the directory structure in a section when setting the permalink in the config (and mimic the default behaviour). Adding a variable like ‘:dir’ or ‘:filepath’ would allow using config permalinks in combination with directory structures (without creating subsections).
+Default behaviour for section 'cars' (without _index.md files and thus without subsections):
+filepath: /content/cars/mercedes/suv/s560.md
+URL: /cars/mercedes/suv/s560/
+You cannot get this result when setting the permalink in the config. The closest you can get is by using ':sections', but that requires you to use _index.md files (thus subsections).
+More info:
+https://discourse.gohugo.io/t/permalink-with-directory-structure/36203/10",gohugoio/hugo#8523,gohugoio/hugo#8523,"Add Permalink option for section pages
+I have something like the following option in the config.toml:
+[permalinks]
+posts = ""/new-posts/:filename/""
+
+If I visit http://localhost:1313/new-posts/post-name/ I get the intended page. But if I visit http://localhost:1313/new-posts/ I don't get the list page, as I would expect. Instead, I get nothing at all.  I still have to go to http://localhost:1313/posts/ to get the list page.
+The version I'm using:
+hugo v0.83.1+extended linux/amd64 BuildDate=unknown
+
+I'm not sure if this behavior is intended. But it would be a good idea to have the ability to change the URL of the list pages using the permalinks option as well. Right now, I have to add the url parameter in the front matter of the _index.md to make the list page have the different url."
+improved,thingsboard/thingsboard#6228,3,1,2,0.6666666666666667,"[Bug] HTTP Integration not working with PEM SSL config - javax.net.ssl.SSLHandshakeException: General OpenSslEngine problem
+Describe the bug
+We configured SSL using PEM via documentation guide:
+https://thingsboard.io/docs/pe/user-guide/ssl/http-over-ssl/
+This works fine and the web front-end is available with https. When trying to send data from rulechain to HTTP integration an error occurs due to SSL problems.
+Is there anything missing which needs to be added to the config?
+Your Server Environment
+
+
+own setup
+
+local infrastructure
+ThingsBoard Version 3.3.3
+Ubuntu
+
+
+
+Connectivity
+
+Integration: (HTTP)
+
+
+
+To Reproduce
+Steps to reproduce the behavior:
+
+Apply Config for SSL https://thingsboard.io/docs/pe/user-guide/ssl/http-over-ssl/
+Create a new HTTP Integration and Copy the URL
+Create a rulechain with generator node
+Add rest api call node using the Integration URL
+Inspect Debug logs of rest api call node
+
+Expected behavior
+Request to the HTTP Integration should be successful without any SSL issues.
+Additional context
+Error Message printed in debug logs:
+io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General OpenSslEngine problem
+at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:477)
+at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:276)
+at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379)
+at io.netty.channel.AbstractChannelHa",thingsboard/thingsboard#1499,thingsboard/thingsboard#1499,"error in rest api call on the rule engine, tested on the PE edition ?
+@vparomskiy @ashvayka @ikulikov @Terny22
+like shown in the picture
+
+i created a generator that return a data that will be used later on the rest api call body,
+data is received correctly by the rest api call but the output of rest api call in debug mode return:
+class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+the function generate  in the generator is:
+var msg = { to: ""ExponentPushToken[U6m1O3Md5555555iCxC83]"", title: ""salam"",
+    body: ""world""};
+var metadata = { data: 40 };
+var msgType = ""DebugMsg"";
+
+return { msg: msg, metadata: metadata, msgType: msgType };
+
+and in the rest api node
+endpoint: https://exp.host/--/api/v2/push/send
+request method: post
+header:
+host                          exp.host
+accept                      application/json
+accept-encoding     gzip,deflate
+content-type            application/json
+
+in the event type: debug type: out
+metadata:
+{
+    ""data"": ""40"",
+    ""error"": ""class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+}
+
+error:
+io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem
+	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:459)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:265)
+
+...
+...
+...
+
+i already tested on the platform edition"
+improved,remix-run/remix#3015,3,1,2,0.6666666666666667,"SVG Icon causing `Uncaught Error: Cannot initialize 'routeModules'.`
+What version of Remix are you using?
+1.4.3
+Steps to Reproduce
+Can't reproduce on a clean install but happens whenever I use a ReactIcon component, nothing else changes in the application.
+Expected Behavior
+To render the application without server code
+Actual Behavior
+The app crashes",remix-run/remix#2987,remix-run/remix#2987,"Identifier 'React' has already been declared with multiple external libraries
+What version of Remix are you using?
+1.4.1
+Steps to Reproduce
+More Details:
+React Version: 18
+Yarn
+
+Install remix for cloudflare pages setup
+Add libraries like (react-spring, framer-motion, react-hook/mouse-postion)
+Use them (simple import is enough)
+
+Expected Behavior
+Application/Website loads correctly when running wrangler pages dev ./public and remix watch
+Actual Behavior
+Website loads, shows for a few ms, then breaks. Console sends multiple errors:
+Uncaught SyntaxError: Identifier 'React' has already been declared
+
+Uncaught Error: Cannot initialize 'routeModules'. This normally occurs when you have server code in your client modules.
+
+Hydration failed because the initial UI does not match what was rendered on the server.
+
+react-dom.development.js:86 Warning: An error occurred during hydration. The server HTML was replaced with client content in <#document>.
+
+The first error shows the error into the installed packages from above, always the same line (the first react import)
+var React = __toESM(require_react());
+This happens to a lot of modules. You can fix that by renaming React to something else within the package and patching those with npx patch-package. But this makes things hard as you have to patch a lot of packages. It looks like something is going wrong during compilation (which naturally is part of remix - non-configurable).
+Can somebody reproduce this issue?
+Edit:
+Node Version: v16.13"
+improved,qax-os/excelize#1375,3,1,2,0.6666666666666667,"How can I get the correct date data?
+cellType, _ := file.GetCellType(""Sheet1"", ""A1"")
+value, _ := file.GetCellValue(""Sheet1"", ""A1"")
+fmt.Println(cellType)
+fmt.Println(value)
+expected console 1
+2  //CellTypeDate
+44854
+expected console 2
+5  //CellTypeString
+2022/10/20
+actual console
+0  //CellTypeUnset
+44854
+I can't get any kind of desired results, How can I get the correct date data?
+t.xlsx",qax-os/excelize#1041,qax-os/excelize#1041,"GetCellType retunrned Cell type is different in xlsx created by Excel and LibreCalc
+Description
+在Excel或LibreOffice编辑的xlsx文件中，对数字或日期类型的数据使用GetCellType()但得到的结果不正确，且两个软件编辑的xlsx文件返回的结果还不一样。
+Steps to reproduce the issue:
+
+用Microsoft Excel新建testGetCellType.xlsx, 在A列写入:
+
+
+
+
+
+A
+
+
+
+
+1
+100
+
+
+2
+abc
+
+
+3
+TRUE
+
+
+4
+2021-10-1
+
+
+5
+1000.1
+
+
+6
+=1/0
+
+
+
+
+运行如下代码:
+
+func main () {
+  f, err := excelize.OpenFile(""./testGetCellType.xlsx"")
+  if err != nil {
+    fmt.Fprintln(os.Stderr, err)
+    return
+  }
+  fmt.Println(f.GetCellType(""Sheet1"", ""A1""))
+  f.SetCellInt(""Sheet1"", ""A1"", 1)
+  fmt.Println(f.GetCellType(""Sheet1"", ""A1""))
+  fmt.Println(f.GetCellType(""Sheet1"", ""A2""))
+  fmt.Println(f.GetCellType(""Sheet1"", ""A3""))
+  fmt.Println(f.GetCellType(""Sheet1"", ""A4""))
+  fmt.Println(f.GetCellType(""Sheet1"", ""A5""))
+  fmt.Println(f.GetCellType(""Sheet1"", ""A6""))
+  f.Close()
+}
+/*
+const (
+  CellTypeUnset CellType = iota
+  CellTypeBool
+  CellTypeDate
+  CellTypeError
+  CellTypeNumber
+  CellTypeString
+)
+*/
+Describe the results you received:
+0 <nil>
+0 <nil>
+5 <nil>
+1 <nil>
+0 <nil>
+0 <nil>
+3 <nil>
+
+当我不使用Excel而使用LibreOffice写入, 结果为:
+4 <nil>
+0 <nil>
+5 <nil>
+1 <nil>
+4 <nil>
+4 <nil>
+3 <nil>
+
+Describe the results you expected:
+4 <nil>
+4 <nil>
+5 <nil>
+1 <nil>
+2 <nil>
+4 <nil>
+3 <nil>
+
+Output of go version:
+go version go1.17.1 darwin/arm64
+
+Excelize version or commit ID:
+5f907b78245a
+
+Environment details (OS, Microsoft Excel™ version, physical, etc.):
+macOS 11.6 (M1)
+Microsoft Excel 16.54
+LibreOffice 7.2.1.2 / LibreOffice Community (B"
+improved,grpc-ecosystem/grpc-gateway#2976,3,1,2,0.6666666666666667,"swagger execute with wrong url when using post: ""/v1/Things/{thing}/Services/{service}""
+🐛 Bug Report
+When using post: ""/v1/Things/{thing}/Services/{service}"", swagger execute with wrong url.
+Expected behavior
+Should call http://localhost:8080/v1/Things/Thing1/Services/Start
+Actual Behavior",grpc-ecosystem/grpc-gateway#702,grpc-ecosystem/grpc-gateway#702,"The swagger plugin couldn’t distinguish two rpcs if we use the resource name design style.
+The swagger plugin couldn’t distinguish two rpcs designed according to the Google API Design Guide Resource Names as below:
+  rpc GetService(GetServiceRequest) returns (Service) {
+    option (google.api.http) = {
+      get: ""/v1/{name=service_categories/*/services/*}""
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      description: ""Get a service.The **name** must have the format of `service_categories/*/services/*`."";
+      tags: ""Service"";
+    };
+  }
+
+  rpc GetUser(GetUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: ""/v1/{name=users/*}""
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      description: ""Get a user.The **name** must have the format of `users/*`."";
+      tags: ""User"";
+    };
+  }
+
+The two generated results from the swagger plugin both use the /v1/{name} as the key.
+There is no problem if we use ID as the user input, but according to the Google API Design Guide the name is a better choice.
+Is there any solution about this issue?"
+regressed,googlevr/cardboard#320,1,4,-3,-0.75,"Google Cardboard v 1.11.0 and Firebase 8.7.0 crash
+I'm developing an Android app in Unity that leverages Google Cardboard and Google Firebase. When I include Firestore in my project the app will crash when I run it. If I don't initialize XR at runtime, the app runs, but will crash once VR is toggled on. I've seen similar posts to this and it sounded like version 1.10.0 fixed a similar issue by using Protobuf version 3.10.0. Unfortunately that solution is not working for me. I've included a link to the project at the bottom of this report. Thanks for your help!
+
+
+Devices
+Samsung Galaxy s9
+
+
+Steps to reproduce
+
+
+
+Open the HelloCardboard scene
+Setup project according the Cardboard SDK instructions
+Install the Firebase Unity SDK Firestore package and follow setup instructions
+Build and run the app
+The app will crash as soon as you touch the screen
+
+Firebase SDK
+
+8.7.0
+
+Cardboard Unity SDK
+
+1.11.0
+
+Unity Version
+
+2021.1.28
+
+Graphic APIs
+
+OpenGL ES3
+OpenGL ES2
+
+LINK TO PROJECT
+https://we.tl/t-duRiNehCVV",googlevr/cardboard#280,googlevr/cardboard#280,"Google XR Plugin not working with Firebase Firestore
+Google XR Plugin no longer works with firestore in any version of unity, google xr plugin, or firestore. With only Firestore imported we get a proper working build. Then, with only Google XR plugin imported we get a working build. However, when you have both plugins imported and initialized, mobile build crashes on a black screen before unity splash screen.
+Steps to reproduce:
+
+Open a clean Unity project (the problem seems to persist in any version), set proper settings.
+Import Google XR plugin from UPM, set proper settings, add proper dependencies.
+Import Firebase Firestore, set proper settings, add proper dependencies.
+Open demo HelloVR scene.
+Build scene to android or IOS.
+
+Also, with both plugins imported and XR ""initialize on startup"" toggled, the app crashes before unity splash screen. However, you do not get a crash when it is toggled off, leading me to believe something is causing a hangup while initializing VR.
+This also only seems to be an issue with the firebase firestore. All other firebase plugins (in any combination) work and build properly with google xr plugin. This was also not an issue before trying to migrate to AndroidX leading me to believe the issue lies somewhere in there but have yet to find it.
+Does anyone know a fix to this or have a workaround? This has been stalling my project for months. Any help would be greatly appreciated! Thanks!
+logcat:
+
+2021-07-03 22:33:55.348 4932-5626/? D/SecurityAppWatc"
+regressed,supabase/auth#1057,1,3,-2,-0.6666666666666667,"Allow new auth user accounts from a specific email address domain.
+Feature request
+Is your feature request related to a problem? Please describe.
+I am building an application where the authenticated users are all from a specific domain.  I want a way to only allow accounts to be created for email addresses from a specific domain.
+Describe the solution you'd like
+A way to specify a list of allowed domains for new account creation, or an example for how to use the existing system to check for the email address domain and allow/reject with an error, based on that check.
+Describe alternatives you've considered
+Handling the email validation on the registration form, but this can be bypassed on the client side.",supabase/auth#211,supabase/auth#211,Support a denylist to block non-existent or abusive domain signups
+regressed,phoenixframework/phoenix#4724,1,3,-2,-0.6666666666666667,"Website Down
+You probably know this, but it appears that your website is down. Just a heads up. http://www.phoenixframework.org",phoenixframework/phoenix#4720,phoenixframework/phoenix#4720,"SSL
+https://www.phoenixframework.org/ is throwing an SSL connection error. Tested on Firefox, Chrome, and Safari. I'm not sure where else to flag this due to not having access to the site so I figured this might be a good place...
+Specifically, I'm shown this on Firefox:
+Secure Connection Failed
+
+An error occurred during a connection to www.phoenixframework.org. Peer received a valid certificate, but access was denied.
+
+Error code: SSL_ERROR_ACCESS_DENIED_ALERT
+
+The dev tools reveal nothing, this is the most descriptive thing I could find. I'll also attach a screenshot."
+regressed,towhee-io/towhee#431,1,2,-1,-0.5,"[Bug]: If dependency installation was interrupted, the dependencies won't be installed in the next run.
+Is there an existing issue for this?
+
+ I have searched the existing issues
+
+Current Behavior
+There are serval similar issues, If op dependency installation was interrupted by internet connection, ctrl + c or something else, the dependencies are not installed properly. But the pip install -r requirements.txt command won't be triggered again in the next run unless there are updates on the repos' main branch. Therefore causing ModuleNotFound error.
+Expected Behavior
+If the dependency installation was interrupted, execute again in the next run.
+Steps To Reproduce
+from towhee import pipeline
+
+p = pipeline('image-embedding')
+img = 'path/to/image.jpg'
+p(img)
+
+When installing dependencies, press `ctrl + c`
+Environment
+- Towhee version(e.g. v0.1.3 or 8b23a93):
+- OS(Ubuntu or CentOS):
+- CPU/Memory:
+- GPU:
+- Others:
+Anything else?
+No response",towhee-io/towhee#402,towhee-io/towhee#402,"[Bug]: Failed to run pieline after the first interruption
+Is there an existing issue for this?
+
+ I have searched the existing issues
+
+Current Behavior
+According to the page: https://docs.towhee.io/tutorials/reverse-image-search
+
+pip3 install towhee
+
+
+ pip3 install gdown
+ gdown ""https://drive.google.com/uc?id=1bg1RtUjeZlOfV2BiA2nf7sn5Jec9b-9I""
+ unzip -q image_dataset.zip
+
+
+start a milvus server
+pip3 install pymilvus==2.0.0rc9
+run this script:
+
+from towhee import pipeline
+import numpy as np
+import os
+from pathlib import Path
+
+embedding_pipeline = pipeline('towhee/image-embedding-resnet50')
+
+dataset_path = './image_dataset/dataset/'
+images = []
+vectors = []
+
+for img_path in Path(dataset_path).glob('*'):
+    vec = embedding_pipeline(str(img_path))
+    norm_vec = vec / np.linalg.norm(vec)
+    vectors.append(norm_vec.tolist())
+    images.append(str(img_path.resolve()))
+
+I got the following errors, and the script hangs:
+(venv) ➜  towhee_test python3 ./test.py  
+2022-01-05 14:57:32,183 - 140555422004992 - thread_pool_task_executor.py-thread_pool_task_executor:77 - ERROR: Traceback (most recent call last):
+  File ""/home/yhmo/git-go/towhee_test/venv/lib/python3.6/site-packages/towhee/engine/thread_pool_task_executor.py"", line 70, in execute
+    runner.op_args)
+  File ""/home/yhmo/git-go/towhee_test/venv/lib/python3.6/site-packages/towhee/engine/operator_pool.py"", line 105, in acquire_op
+    op = self._op_loader.load_operator(hub_op_id, op_args)
+  File ""/home/yhmo/git-go/towhee_test/venv"
+regressed,zammad/zammad#4059,1,2,-1,-0.5,"Migrating to gmail oauth2 breaks email send, reverting to previous working setup does not resolve the issue
+Infos:
+
+Used Zammad version: 5.1.X
+Installation method (source, package, ..): Packages
+Operating system: Ubuntu 20.04
+Database + version: (PostgreSQL) 12.9
+Elasticsearch version: 7.17.2
+Browser + version: chrome 99.0.4844.84
+
+Expected behavior:
+
+Migrating from a working email channel setup with a gmail account / app specific password to gmail oauth2 channel using the Migrate Now button and then reverting the migration email will continue to send
+
+Actual behavior:
+
+After migrating from a working email channel setup with a gmail account / app specific password to gmail oauth2 channel using the Migrate Now button and then reverting using the Roll Back Migration button causes no email to send
+
+Steps to reproduce the behavior:
+
+Setup a gmail account using the email channel and verify mail can be sent / received
+Select the Migrate now button in Zammad to move to gmail oauth2 authentication
+Mail will be received but cannot be sent
+Revert to the previous setup using the Rollback Migration button
+Mail will be received but cannot be sent
+Adding new accounts, changing to a local MTA, etc will not be able to send email.
+
+Yes I'm sure this is a bug and no feature request or a general question.",zammad/zammad#4056,zammad/zammad#4056,"unable to send email via gmail / oauth2
+Infos:
+
+Used Zammad version: 5.1.X
+Installation method (source, package, ..): Package
+Operating system: Ubuntu 20.04
+Database + version: (PostgreSQL) 12.9
+Elasticsearch version: 7.17.2
+Browser + version: chrome 99.0.4844.84
+
+Expected behavior:
+
+after setting up oauth2 / gmail zammad will be able to send and receive email via the gmail account.
+
+Actual behavior:
+
+zammad is able to receive email via gmail / oauth2 but will not send email
+
+Steps to reproduce the behavior:
+
+configure gmail with oauth2 authentication and try sending an email either by creating or responding to a ticket
+
+Yes I'm sure this is a bug and no feature request or a general question.
+log from production.log below while trying to send an email. nothing shows up in sechedule_err or schedule_out.log files.
+I, [2022-04-13T11:30:13.786877 #616-7440]  INFO -- : Running job thread for 'Check 'Channel' streams.' (Channel.stream) status is: sleep I, [2022-04-13T11:30:13.787029 #616-7440]  INFO -- : Running job thread for 'Generate 'Session' data.' (Sessions.jobs) status is: sleep I, [2022-04-13T11:30:13.787118 #616-7440]  INFO -- : Running job thread for 'Check channels.' (Channel.fetch) status is: sleep I, [2022-04-13T11:30:13.787360 #616-7440]  INFO -- : Running job thread for 'Process ticket escalations.' (Ticket.process_escalation) status is: sleep I, [2022-04-13T11:30:13.788431 #616-7440]  INFO -- : Running job thread for 'Execute planned jobs.' (Job.run) status is: slee"
