@@ -1,0 +1,149 @@
+query_id,method,rank,candidate_id,direct_duplicate,score,tfidf_rank,minilm_rank,hybrid_rank,tfidf_score,minilm_score,hybrid_score,candidate_text,query_repo,candidate_repo,cross_repository
+thingsboard/thingsboard#6228,TF-IDF,1,thinkaurelius/titan#921,False,0.7232867479324341,1,367,255,0.7232867479324341,0.23334136605262756,0.0030444964871194384,"Traversal and Transaction - Titan 0.9M1
+Reported here in the mailing list:
+https://groups.google.com/d/msg/aureliusgraphs/JgMlZsuXhgg/slJF-qrpngMJ
+but something i discovered a while back on my own and discussed with @dalaro - not sure that we came to a solution or if this is fixed.  i figured i would create an issue to prevent forgetting about it again.
+it's pretty easy to recreate the problem:
+gremlin> :remote connect tinkerpop.server conf/remote.yaml
+==>Connected - localhost/127.0.0.1:8182
+gremlin> :> g
+==>standardtitangraph[berkeleyje:db/berkeley]
+gremlin> :> g.addVertex(""name"",""stephen"")
+==>v[256]
+gremlin> :> g.V().count()
+==>1
+gremlin> :> g.V()
+==>v[256]
+gremlin> :> g.V().values(""name"")
+==>stephen
+
+all works as expected - it can clearly serialize all of that.  the use of has triggers this:
+gremlin> :> g.V().has(""name"",""stephen"")
+WARN  io.netty.channel.DefaultChannelPipeline  - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.lang.NullPointerException
+    at com.tinkerpop.gremlin.driver.Handler$GremlinResponseHandler.channelRead0(Handler.java:45)
+    at com.tink",thingsboard/thingsboard,thinkaurelius/titan,True
+thingsboard/thingsboard#6228,MiniLM,1,droe/sslsplit#173,False,0.5984067916870117,641,1,2,0.04544622451066971,0.5984067916870117,0.015645097167980168,"Client certificate authentication
+sslsplit works fine on sites that do not require server side client certs, if they do it can only handle them with the -P (passthrough) option.
+Works when I actually connect to the site and not sslsplit:
+curl -k --cert ca.cert.pem --cacert  ca.cert.pem --key key.pem -v https://somesite:8181
+Fails when I try to go through sslsplit:
+curl -k --cert ca.cert.pem --cacert  ca.cert.pem --key key.pem -v https://localhost:8181
+with this error: Error from bufferevent: 0:- 336151570:1042:sslv3 alert bad certificate:20:SSL routines:148:ssl3_read_bytes
+packet traces reveal the server is sending a bad certificate error presumably because the client (sslsplit) sent no client cert. The client cert does not appear to be being validated as the certs I am sending are self-signed, but the server is definitely requiring the cert to be there.
+It would be nice to be able to specify a default client cert to avoid this. Will look at it.",thingsboard/thingsboard,droe/sslsplit,True
+thingsboard/thingsboard#6228,Weighted RRF,1,thingsboard/thingsboard#1499,True,0.01586061507936508,4,3,1,0.4559386968612671,0.5394488573074341,0.01586061507936508,"error in rest api call on the rule engine, tested on the PE edition ?
+@vparomskiy @ashvayka @ikulikov @Terny22
+like shown in the picture
+
+i created a generator that return a data that will be used later on the rest api call body,
+data is received correctly by the rest api call but the output of rest api call in debug mode return:
+class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+the function generate  in the generator is:
+var msg = { to: ""ExponentPushToken[U6m1O3Md5555555iCxC83]"", title: ""salam"",
+    body: ""world""};
+var metadata = { data: 40 };
+var msgType = ""DebugMsg"";
+
+return { msg: msg, metadata: metadata, msgType: msgType };
+
+and in the rest api node
+endpoint: https://exp.host/--/api/v2/push/send
+request method: post
+header:
+host                          exp.host
+accept                      application/json
+accept-encoding     gzip,deflate
+content-type            application/json
+
+in the event type: debug type: out
+metadata:
+{
+    ""data"": ""40"",
+    ""error"": ""class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+}
+
+error:
+io.netty.handler.codec.DecoderException: ",thingsboard/thingsboard,thingsboard/thingsboard,False
+gohugoio/hugo#9327,TF-IDF,1,hexojs/hexo#3601,False,0.31608590483665466,1,12,10,0.31608590483665466,0.4276149570941925,0.014014116575591986,"Permalink not including root
+Environment Info
+This Issue is Continuation of #2610 .
+This Issue is Closed, but the BUG is not fixed.
+For BUG
+
+I've placed <%= page.permalink %> in post.ejs and the result is http://127.0.0.1:4000/El-meu-primer-post-ada5698b/
+
+
+This link is not working as root is /blog/. Also <%= config.url + config.root + (page.path||'').replace('index.html', '') %> produces http://127.0.0.1:4000/blog/El-meu-primer-post-ada5698b/ which is ok.
+
+This is very simple BUG, but I think this is IMPORTANT BUG.
+Permalink not including root.
+Deploy system will use the parameter url, root, permalink.
+Now, post.permalink not including root : url + permalink.
+It should be url + root + permalink",gohugoio/hugo,hexojs/hexo,True
+gohugoio/hugo#9327,MiniLM,1,rails/rails#4820,False,0.530225396156311,499,1,2,0.07043197751045227,0.530225396156311,0.015663215930085926,"config.relative_url_root is not recognized in routes (3.2.1)
+When using config.relative_url_root = /subfolder, the generated routes are not having the prefix appended. I think that by using config.relative_url_root the routing should automatically place the prefix. It's not very elegant to have to repeat the subfolder by placing a scope :path => ""/subfolder"" do end in routes.rb.",gohugoio/hugo,rails/rails,True
+gohugoio/hugo#9327,Weighted RRF,1,gohugoio/hugo#8523,True,0.015873015873015872,3,3,1,0.20943081378936768,0.4801892638206482,0.015873015873015872,"Add Permalink option for section pages
+I have something like the following option in the config.toml:
+[permalinks]
+posts = ""/new-posts/:filename/""
+
+If I visit http://localhost:1313/new-posts/post-name/ I get the intended page. But if I visit http://localhost:1313/new-posts/ I don't get the list page, as I would expect. Instead, I get nothing at all.  I still have to go to http://localhost:1313/posts/ to get the list page.
+The version I'm using:
+hugo v0.83.1+extended linux/amd64 BuildDate=unknown
+
+I'm not sure if this behavior is intended. But it would be a good idea to have the ability to change the URL of the list pages using the permalinks option as well. Right now, I have to add the url parameter in the front matter of the _index.md to make the list page have the different url.",gohugoio/hugo,gohugoio/hugo,False
+googlevr/cardboard#320,TF-IDF,1,googlevr/cardboard#238,False,0.3336281478404999,1,4,3,0.3336281478404999,0.5235725045204163,0.01566342213114754,"Screen Space : Overlay render mode not available with Google Cardboard XR plugin
+Hi,
+We have recently migrated our Unity application from using the GVR SDK to the Google Cardboard XR plugin as an underlying VR framework for our VR application, to resolve the VR render spinning in iOS issue.
+We have noticed that there is a difference in how these VR SDKs work,
+The Unity UI render modes available for GVR were Screen Space -Overlay, Screen Space :Camera and World Space, allowing the UI to be overlaid and followed around with the user's view/camera, placed in the camera's view frustum and be placed in the World space around the user respectively.
+However, in the Google Cardboard XR SDK, only Screen Space: Camera and World Space rendering modes, for the Unity UI to be rendered, are available.
+We would like to know whether there is any workaround available to include Screen Space : Overlay mode with Google Cardboard XR, so that we can overlay our UI in the user's view and also be able to render & interact with it in VR, or whether this is an expected behavior of the SDK.
+Thanks for the support.",googlevr/cardboard,googlevr/cardboard,False
+googlevr/cardboard#320,MiniLM,1,googlevr/cardboard#280,True,0.7224200963973999,1097,1,4,0.07679613679647446,0.7224200963973999,0.015616985703557816,"Google XR Plugin not working with Firebase Firestore
+Google XR Plugin no longer works with firestore in any version of unity, google xr plugin, or firestore. With only Firestore imported we get a proper working build. Then, with only Google XR plugin imported we get a working build. However, when you have both plugins imported and initialized, mobile build crashes on a black screen before unity splash screen.
+Steps to reproduce:
+
+Open a clean Unity project (the problem seems to persist in any version), set proper settings.
+Import Google XR plugin from UPM, set proper settings, add proper dependencies.
+Import Firebase Firestore, set proper settings, add proper dependencies.
+Open demo HelloVR scene.
+Build scene to android or IOS.
+
+Also, with both plugins imported and XR ""initialize on startup"" toggled, the app crashes before unity splash screen. However, you do not get a crash when it is toggled off, leading me to believe something is causing a hangup while initializing VR.
+This also only seems to be an issue with the firebase firestore. All other firebase plugins (in any combination) work and build properly with google xr plugin. This was also not an issue before trying to migrate t",googlevr/cardboard,googlevr/cardboard,False
+googlevr/cardboard#320,Weighted RRF,1,googlevr/cardboard#216,False,0.016129032258064516,2,2,1,0.3163177967071533,0.548538863658905,0.016129032258064516,"Issue with google VR unity SDK in ios and Migration to cardboard-xr-plugin due to the same
+we are developing an app which gives the users an option to add VR content to the app by scanning respective QR codes and play the content by either downloading the video to the device or streaming it directly from the server.
+We have implemented these features too and when we started testing the VR content in the devices, its playing correctly in android devices. But in iOS devices with iOS version 14 or above, the video is continuously spinning when we open it in the video player.
+On further investigation we got to know that this issue is only there with the iOS devices with OS version 14 or above. in all the other devices with os Version 13 or lower, this issue is not there and we are able to play the video correctly.
+After checking multiple blogs and issues in github, we got to know that this issue is happening due to the error in the calibration of gyroscopic sensors in iOS 14 devices.
+and a temporary fix to the issue is to toggle the location services and restart the devices. This will reset the gyroscopic sensors But  the temp fix will only last for a few hours or even a few minutes.
+W",googlevr/cardboard,googlevr/cardboard,False
+supabase/auth#1057,TF-IDF,1,Plume-org/Plume#636,False,0.44113221764564514,1,2,1,0.44113221764564514,0.5379256010055542,0.016142252776308832,"Send confirmation email after registering
+Is your feature request related to a problem? Please describe.
+
+You can't be sure that the email you used to register was correct
+Spammers can create a lot of accounts very easily
+Someone else can use your email (even if I don't know why anyone would do that?)
+
+Describe the solution you'd like
+Send a confirmation email when creating an account.
+Accounts created from the CLI should probably be immediately confirmed.
+Describe alternatives you've considered
+Additional context
+From #635",supabase/auth,plume-org/plume,True
+supabase/auth#1057,MiniLM,1,supabase/auth#211,True,0.590144157409668,646,1,3,0.1092136949300766,0.590144157409668,0.01564459202154832,Support a denylist to block non-existent or abusive domain signups,supabase/auth,supabase/auth,False
+supabase/auth#1057,Weighted RRF,1,Plume-org/Plume#636,False,0.016142252776308832,1,2,1,0.44113221764564514,0.5379256010055542,0.016142252776308832,"Send confirmation email after registering
+Is your feature request related to a problem? Please describe.
+
+You can't be sure that the email you used to register was correct
+Spammers can create a lot of accounts very easily
+Someone else can use your email (even if I don't know why anyone would do that?)
+
+Describe the solution you'd like
+Send a confirmation email when creating an account.
+Accounts created from the CLI should probably be immediately confirmed.
+Describe alternatives you've considered
+Additional context
+From #635",supabase/auth,plume-org/plume,True

@@ -1,0 +1,918 @@
+query_id,method,rank,candidate_id,direct_duplicate,score,tfidf_rank,minilm_rank,hybrid_rank,tfidf_score,minilm_score,hybrid_score,candidate_text
+thingsboard/thingsboard#6228,TF-IDF,1,thinkaurelius/titan#921,False,0.7232867479324341,1,367,255,0.7232867479324341,0.23334136605262756,0.0030444964871194384,"Traversal and Transaction - Titan 0.9M1
+Reported here in the mailing list:
+https://groups.google.com/d/msg/aureliusgraphs/JgMlZsuXhgg/slJF-qrpngMJ
+but something i discovered a while back on my own and discussed with @dalaro - not sure that we came to a solution or if this is fixed.  i figured i would create an issue to prevent forgetting about it again.
+it's pretty easy to recreate the problem:
+gremlin> :remote connect tinkerpop.server conf/remote.yaml
+==>Connected - localhost/127.0.0.1:8182
+gremlin> :> g
+==>standardtitangraph[berkeleyje:db/berkeley]
+gremlin> :> g.addVertex(""name"",""stephen"")
+==>v[256]
+gremlin> :> g.V().count()
+==>1
+gremlin> :> g.V()
+==>v[256]
+gremlin> :> g.V().values(""name"")
+==>stephen
+
+all works as expected - it can clearly serialize all of that.  the use of has triggers this:
+gremlin> :> g.V().has(""name"",""stephen"")
+WARN  io.netty.channel.DefaultChannelPipeline  - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.lang.NullPointerException
+    at com.tinkerpop.gremlin.driver.Handler$GremlinResponseHandler.channelRead0(Handler.java:45)
+    at com.tink"
+thingsboard/thingsboard#6228,TF-IDF,2,triplea-game/triplea#9923,False,0.4635988473892212,2,5053,948,0.4635988473892212,0.06128744035959244,0.0009922525125707407,"2.5.22294: EditPanel#sortUnitsToRemove:931 - java.lang.IllegalArgumentException
+Map
+world_war_ii_global
+Log Message
+Comparison method violates its general contract!
+TripleA Version
+2.5.22294
+Java Version
+11.0.6
+Operating System
+Windows 10
+Memory
+Heap utilization statistics [MB]
+Used Memory: 1030
+Free memory: 949
+Total memory: 1979
+Max memory: 1979
+Stack Trace
+Exception: java.lang.IllegalArgumentExceptionComparison method violates its general contract!
+java.lang.Exception
+	at java.base/java.util.TimSort.mergeHi(TimSort.java:903)
+	at java.base/java.util.TimSort.mergeAt(TimSort.java:520)
+	at java.base/java.util.TimSort.mergeCollapse(TimSort.java:448)
+	at java.base/java.util.TimSort.sort(TimSort.java:245)
+	at java.base/java.util.Arrays.sort(Arrays.java:1515)
+	at java.base/java.util.ArrayList.sort(ArrayList.java:1749)
+	at games.strategy.triplea.ui.EditPanel.sortUnitsToRemove(EditPanel.java:931)
+	at games.strategy.triplea.ui.EditPanel$6.actionPerformed(EditPanel.java:388)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
+	at java.desktop/javax.swing.Defaul"
+thingsboard/thingsboard#6228,TF-IDF,3,triplea-game/triplea#8116,False,0.4635554254055023,3,5281,971,0.4635554254055023,0.057853758335113525,0.0009715201065135542,"2.5.22294: EditPanel#sortUnitsToRemove:931 - java.lang.IllegalArgumentException
+Map
+world_war_ii_global
+Log Message
+Comparison method violates its general contract!
+TripleA Version
+2.5.22294
+Java Version
+11.0.6
+Operating System
+Windows 10
+Memory
+Heap utilization statistics [MB]
+Used Memory: 644
+Free memory: 1335
+Total memory: 1979
+Max memory: 1979
+Stack Trace
+Exception: java.lang.IllegalArgumentExceptionComparison method violates its general contract!
+java.lang.Exception
+	at java.base/java.util.TimSort.mergeHi(TimSort.java:903)
+	at java.base/java.util.TimSort.mergeAt(TimSort.java:520)
+	at java.base/java.util.TimSort.mergeForceCollapse(TimSort.java:461)
+	at java.base/java.util.TimSort.sort(TimSort.java:254)
+	at java.base/java.util.Arrays.sort(Arrays.java:1515)
+	at java.base/java.util.ArrayList.sort(ArrayList.java:1749)
+	at games.strategy.triplea.ui.EditPanel.sortUnitsToRemove(EditPanel.java:931)
+	at games.strategy.triplea.ui.EditPanel$6.actionPerformed(EditPanel.java:388)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
+	at java.desktop/javax.swing.D"
+thingsboard/thingsboard#6228,TF-IDF,4,thingsboard/thingsboard#1499,True,0.4559386968612671,4,3,1,0.4559386968612671,0.5394488573074341,0.01586061507936508,"error in rest api call on the rule engine, tested on the PE edition ?
+@vparomskiy @ashvayka @ikulikov @Terny22
+like shown in the picture
+
+i created a generator that return a data that will be used later on the rest api call body,
+data is received correctly by the rest api call but the output of rest api call in debug mode return:
+class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+the function generate  in the generator is:
+var msg = { to: ""ExponentPushToken[U6m1O3Md5555555iCxC83]"", title: ""salam"",
+    body: ""world""};
+var metadata = { data: 40 };
+var msgType = ""DebugMsg"";
+
+return { msg: msg, metadata: metadata, msgType: msgType };
+
+and in the rest api node
+endpoint: https://exp.host/--/api/v2/push/send
+request method: post
+header:
+host                          exp.host
+accept                      application/json
+accept-encoding     gzip,deflate
+content-type            application/json
+
+in the event type: debug type: out
+metadata:
+{
+    ""data"": ""40"",
+    ""error"": ""class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+}
+
+error:
+io.netty.handler.codec.DecoderException: "
+thingsboard/thingsboard#6228,TF-IDF,5,tchiotludo/akhq#1035,False,0.44748130440711975,5,2323,791,0.44748130440711975,0.11691083759069443,0.0011678879240776016,"Error for Consume with options {}
+Hello,
+When publishing and empty message on topic we have this error on AKHQ (0.20).
+Any idea ?
+2022-03-08 17:17:35,177 ERROR r-thread-4 o.a.c.ErrorController      Error for Consume with options {}
+java.lang.RuntimeException: Error for Consume with options {}
+        at org.akhq.utils.Debug.call(Debug.java:74)
+        at org.akhq.repositories.RecordRepository.consume(RecordRepository.java:120)
+        at org.akhq.controllers.TopicController.data(TopicController.java:204)
+        at org.akhq.controllers.$TopicController$Definition$Exec.dispatch(Unknown Source)
+        at io.micronaut.context.AbstractExecutableMethodsDefinition$DispatchedExecutableMethod.invoke(AbstractExecutableMethodsDefinition.java:351)
+        at io.micronaut.context.DefaultBeanContext$4.invoke(DefaultBeanContext.java:583)
+        at io.micronaut.web.router.AbstractRouteMatch.execute(AbstractRouteMatch.java:303)
+        at io.micronaut.web.router.RouteMatch.execute(RouteMatch.java:111)
+        at io.micronaut.http.context.ServerRequestContext.with(ServerRequestContext.java:103)
+        at io.micronaut.http.server.RouteExecutor.lambda$executeRoute$14(RouteExecutor.java:656)
+      "
+thingsboard/thingsboard#6228,MiniLM,1,droe/sslsplit#173,False,0.5984067916870117,641,1,2,0.04544622451066971,0.5984067916870117,0.015645097167980168,"Client certificate authentication
+sslsplit works fine on sites that do not require server side client certs, if they do it can only handle them with the -P (passthrough) option.
+Works when I actually connect to the site and not sslsplit:
+curl -k --cert ca.cert.pem --cacert  ca.cert.pem --key key.pem -v https://somesite:8181
+Fails when I try to go through sslsplit:
+curl -k --cert ca.cert.pem --cacert  ca.cert.pem --key key.pem -v https://localhost:8181
+with this error: Error from bufferevent: 0:- 336151570:1042:sslv3 alert bad certificate:20:SSL routines:148:ssl3_read_bytes
+packet traces reveal the server is sending a bad certificate error presumably because the client (sslsplit) sent no client cert. The client cert does not appear to be being validated as the certs I am sending are self-signed, but the server is definitely requiring the cert to be there.
+It would be nice to be able to specify a default client cert to avoid this. Will look at it."
+thingsboard/thingsboard#6228,MiniLM,2,droe/sslsplit#19,False,0.5646666288375854,757,2,3,0.040872395038604736,0.5646666288375854,0.015383780155565206,"Option -t fails to load certificate on Linux
+sslsplit -D -l connections.log -j /tmp/sslsplit/ -S logdir/ -P -t ./certs/ ssl 0.0.0.0 9443 tcp 0.0.0.0 9080
+...
+Failed to load cert and key from PEM file './certs/'
+
+certs directory exists and have a single PEM file inside (foobar.pem):
+-----BEGIN ENCRYPTED PRIVATE KEY-----
+MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDgQIb0sfVok+83ECAggA
+MBQGCCqGSIb3DQMHBAiR0r6JINsSZgSCBMiEauatBQlxvspUMgYYL/EMznz3dXm3
+Q...
+-----END ENCRYPTED PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIDbzCCAlegAwIBAgIJANHqAxI0u/R9MA0GCSqGSIb3DQEBBQUAME4xCzAJBgNV
+BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMREwDwYDVQQKDAhGYWNlYm9vazEX
+MBUGA1UEAwwOKi5mYWNlYm9vay5jb20wHhcNMTQwMTI5MTAxNjE2WhcNMTkwMTI5...
+-----END CERTIFICATE-----
+
+I believe that the problem resides inside the sys.c/sys_dir_eachfile function which incorrectly traverses through directory structure."
+thingsboard/thingsboard#6228,MiniLM,3,thingsboard/thingsboard#1499,True,0.5394488573074341,4,3,1,0.4559386968612671,0.5394488573074341,0.01586061507936508,"error in rest api call on the rule engine, tested on the PE edition ?
+@vparomskiy @ashvayka @ikulikov @Terny22
+like shown in the picture
+
+i created a generator that return a data that will be used later on the rest api call body,
+data is received correctly by the rest api call but the output of rest api call in debug mode return:
+class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+the function generate  in the generator is:
+var msg = { to: ""ExponentPushToken[U6m1O3Md5555555iCxC83]"", title: ""salam"",
+    body: ""world""};
+var metadata = { data: 40 };
+var msgType = ""DebugMsg"";
+
+return { msg: msg, metadata: metadata, msgType: msgType };
+
+and in the rest api node
+endpoint: https://exp.host/--/api/v2/push/send
+request method: post
+header:
+host                          exp.host
+accept                      application/json
+accept-encoding     gzip,deflate
+content-type            application/json
+
+in the event type: debug type: out
+metadata:
+{
+    ""data"": ""40"",
+    ""error"": ""class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+}
+
+error:
+io.netty.handler.codec.DecoderException: "
+thingsboard/thingsboard#6228,MiniLM,4,pocoproject/poco#1303,False,0.525696337223053,2106,4,4,0.021553847938776016,0.525696337223053,0.014866834025854108,"HTTPSClientSession::sendRequest() fails if server has wildcard cert
+HTTPSClientSession::sendRequest() throws a CertificateValidationException when connecting to a server with a wildcard cert (.example.com) *IF you use the no-argument HTTPSClientSession() constructor. For example:
+Poco::URI uri(""http://blah.example.com"");   // SSL cert is for *.example.com
+Poco::Net::HTTPSClientSession session;      // Note no-arg constructor
+session.setHost(uri.getHost());
+session.setPort(uri.getPort());
+
+Poco::Net::HTTPRequest req;
+// Populate req...
+
+session.sendRequest(req);      // Throws CertificateValidationException:
+                               // ""Unacceptable certificate from x.x.x.x,
+                               // application verification failure""
+
+It took a bit of wading through Poco source to see what was really going on. The problem is that in the no-arg constructor case, the HTTPSClientSession class never calls setPeerHostname on the underlying SecureStreamSocket. As a result, when it comes time to do certificate validation, Poco ends up trying to validate an IP address against the cert CN, which won't work (since any IP addr fails to match against the *.example.com CN).
+Several"
+thingsboard/thingsboard#6228,MiniLM,5,droe/sslsplit#244,False,0.5253795981407166,989,5,5,0.03435425087809563,0.5253795981407166,0.01466304905771064,"loading src server certificate failed
+Hi,
+Straightforward brand new set up
+Windows 10 client using a gateway to a kali mitm
+traffic flow is fine to/fro client to the Internet via kali
+I get loading src server certificate failed on port 443 (if (SSL_CTX_use_certificate(sslctx, crt) != 1)). Same behavior if using chrome browser or edge browser on the client, also same behavior when request comes from a locally installed app that attempts authentication to a remote server via port 443
+I used https://blog.heckel.xyz/2013/08/04/use-sslsplit-to-transparently-sniff-tls-ssl-connections/ for basic configuration. The sslsplit certificate is installed in trusted root certification authorities on Windows client
+Please let me know.
+Thanks!
+ca_crt.txt
+iptables_rules.txt
+openssl_version.txt
+sslsplit_command.txt
+sslsplit_debug_output.txt
+sslsplit_V.txt
+uname_a.txt
+ca.key.txt"
+thingsboard/thingsboard#6228,Weighted RRF,1,thingsboard/thingsboard#1499,True,0.01586061507936508,4,3,1,0.4559386968612671,0.5394488573074341,0.01586061507936508,"error in rest api call on the rule engine, tested on the PE edition ?
+@vparomskiy @ashvayka @ikulikov @Terny22
+like shown in the picture
+
+i created a generator that return a data that will be used later on the rest api call body,
+data is received correctly by the rest api call but the output of rest api call in debug mode return:
+class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+the function generate  in the generator is:
+var msg = { to: ""ExponentPushToken[U6m1O3Md5555555iCxC83]"", title: ""salam"",
+    body: ""world""};
+var metadata = { data: 40 };
+var msgType = ""DebugMsg"";
+
+return { msg: msg, metadata: metadata, msgType: msgType };
+
+and in the rest api node
+endpoint: https://exp.host/--/api/v2/push/send
+request method: post
+header:
+host                          exp.host
+accept                      application/json
+accept-encoding     gzip,deflate
+content-type            application/json
+
+in the event type: debug type: out
+metadata:
+{
+    ""data"": ""40"",
+    ""error"": ""class io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: General SSLEngine problem""
+}
+
+error:
+io.netty.handler.codec.DecoderException: "
+thingsboard/thingsboard#6228,Weighted RRF,2,droe/sslsplit#173,False,0.015645097167980168,641,1,2,0.04544622451066971,0.5984067916870117,0.015645097167980168,"Client certificate authentication
+sslsplit works fine on sites that do not require server side client certs, if they do it can only handle them with the -P (passthrough) option.
+Works when I actually connect to the site and not sslsplit:
+curl -k --cert ca.cert.pem --cacert  ca.cert.pem --key key.pem -v https://somesite:8181
+Fails when I try to go through sslsplit:
+curl -k --cert ca.cert.pem --cacert  ca.cert.pem --key key.pem -v https://localhost:8181
+with this error: Error from bufferevent: 0:- 336151570:1042:sslv3 alert bad certificate:20:SSL routines:148:ssl3_read_bytes
+packet traces reveal the server is sending a bad certificate error presumably because the client (sslsplit) sent no client cert. The client cert does not appear to be being validated as the certs I am sending are self-signed, but the server is definitely requiring the cert to be there.
+It would be nice to be able to specify a default client cert to avoid this. Will look at it."
+thingsboard/thingsboard#6228,Weighted RRF,3,droe/sslsplit#19,False,0.015383780155565206,757,2,3,0.040872395038604736,0.5646666288375854,0.015383780155565206,"Option -t fails to load certificate on Linux
+sslsplit -D -l connections.log -j /tmp/sslsplit/ -S logdir/ -P -t ./certs/ ssl 0.0.0.0 9443 tcp 0.0.0.0 9080
+...
+Failed to load cert and key from PEM file './certs/'
+
+certs directory exists and have a single PEM file inside (foobar.pem):
+-----BEGIN ENCRYPTED PRIVATE KEY-----
+MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDgQIb0sfVok+83ECAggA
+MBQGCCqGSIb3DQMHBAiR0r6JINsSZgSCBMiEauatBQlxvspUMgYYL/EMznz3dXm3
+Q...
+-----END ENCRYPTED PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIDbzCCAlegAwIBAgIJANHqAxI0u/R9MA0GCSqGSIb3DQEBBQUAME4xCzAJBgNV
+BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMREwDwYDVQQKDAhGYWNlYm9vazEX
+MBUGA1UEAwwOKi5mYWNlYm9vay5jb20wHhcNMTQwMTI5MTAxNjE2WhcNMTkwMTI5...
+-----END CERTIFICATE-----
+
+I believe that the problem resides inside the sys.c/sys_dir_eachfile function which incorrectly traverses through directory structure."
+thingsboard/thingsboard#6228,Weighted RRF,4,pocoproject/poco#1303,False,0.014866834025854108,2106,4,4,0.021553847938776016,0.525696337223053,0.014866834025854108,"HTTPSClientSession::sendRequest() fails if server has wildcard cert
+HTTPSClientSession::sendRequest() throws a CertificateValidationException when connecting to a server with a wildcard cert (.example.com) *IF you use the no-argument HTTPSClientSession() constructor. For example:
+Poco::URI uri(""http://blah.example.com"");   // SSL cert is for *.example.com
+Poco::Net::HTTPSClientSession session;      // Note no-arg constructor
+session.setHost(uri.getHost());
+session.setPort(uri.getPort());
+
+Poco::Net::HTTPRequest req;
+// Populate req...
+
+session.sendRequest(req);      // Throws CertificateValidationException:
+                               // ""Unacceptable certificate from x.x.x.x,
+                               // application verification failure""
+
+It took a bit of wading through Poco source to see what was really going on. The problem is that in the no-arg constructor case, the HTTPSClientSession class never calls setPeerHostname on the underlying SecureStreamSocket. As a result, when it comes time to do certificate validation, Poco ends up trying to validate an IP address against the cert CN, which won't work (since any IP addr fails to match against the *.example.com CN).
+Several"
+thingsboard/thingsboard#6228,Weighted RRF,5,droe/sslsplit#244,False,0.01466304905771064,989,5,5,0.03435425087809563,0.5253795981407166,0.01466304905771064,"loading src server certificate failed
+Hi,
+Straightforward brand new set up
+Windows 10 client using a gateway to a kali mitm
+traffic flow is fine to/fro client to the Internet via kali
+I get loading src server certificate failed on port 443 (if (SSL_CTX_use_certificate(sslctx, crt) != 1)). Same behavior if using chrome browser or edge browser on the client, also same behavior when request comes from a locally installed app that attempts authentication to a remote server via port 443
+I used https://blog.heckel.xyz/2013/08/04/use-sslsplit-to-transparently-sniff-tls-ssl-connections/ for basic configuration. The sslsplit certificate is installed in trusted root certification authorities on Windows client
+Please let me know.
+Thanks!
+ca_crt.txt
+iptables_rules.txt
+openssl_version.txt
+sslsplit_command.txt
+sslsplit_debug_output.txt
+sslsplit_V.txt
+uname_a.txt
+ca.key.txt"
+gohugoio/hugo#9327,TF-IDF,1,hexojs/hexo#3601,False,0.31608590483665466,1,12,10,0.31608590483665466,0.4276149570941925,0.014014116575591986,"Permalink not including root
+Environment Info
+This Issue is Continuation of #2610 .
+This Issue is Closed, but the BUG is not fixed.
+For BUG
+
+I've placed <%= page.permalink %> in post.ejs and the result is http://127.0.0.1:4000/El-meu-primer-post-ada5698b/
+
+
+This link is not working as root is /blog/. Also <%= config.url + config.root + (page.path||'').replace('index.html', '') %> produces http://127.0.0.1:4000/blog/El-meu-primer-post-ada5698b/ which is ok.
+
+This is very simple BUG, but I think this is IMPORTANT BUG.
+Permalink not including root.
+Deploy system will use the parameter url, root, permalink.
+Now, post.permalink not including root : url + permalink.
+It should be url + root + permalink"
+gohugoio/hugo#9327,TF-IDF,2,hexojs/hexo#2105,False,0.3112388253211975,2,10,8,0.3112388253211975,0.448378324508667,0.014377880184331797,"permalink for pages broken for when config.root
+in lib/models/page.js
+Page.virtual('permalink').get(function() {
+    return ctx.config.url + '/' + this.path;
+  });
+should reflect:
+Page.virtual('permalink').get(function() {
+    return ctx.config.url + ctx.config.root + this.path;
+  });
+Somewhat like
+  Post.virtual('permalink').get(function() {
+    var config = ctx.config;
+
+    return config.url + config.root + this.path;
+  });
+in lib/models/page.js
+Same counts for category.js and tag.js"
+gohugoio/hugo#9327,TF-IDF,3,gohugoio/hugo#8523,True,0.20943081378936768,3,3,1,0.20943081378936768,0.4801892638206482,0.015873015873015872,"Add Permalink option for section pages
+I have something like the following option in the config.toml:
+[permalinks]
+posts = ""/new-posts/:filename/""
+
+If I visit http://localhost:1313/new-posts/post-name/ I get the intended page. But if I visit http://localhost:1313/new-posts/ I don't get the list page, as I would expect. Instead, I get nothing at all.  I still have to go to http://localhost:1313/posts/ to get the list page.
+The version I'm using:
+hugo v0.83.1+extended linux/amd64 BuildDate=unknown
+
+I'm not sure if this behavior is intended. But it would be a good idea to have the ability to change the URL of the list pages using the permalinks option as well. Right now, I have to add the url parameter in the front matter of the _index.md to make the list page have the different url."
+gohugoio/hugo#9327,TF-IDF,4,fossasia/loklak_webclient#114,False,0.1695905327796936,4,439,303,0.1695905327796936,0.2178020179271698,0.0026850576152304614,"Set up a production environment so that the webclient can be deployed
+Since, we now also use a node server, deploying just the build directory won't do.
+Running the node server independently (without gulp dev) shows a ENOENT error, as it now has a different root path. I have two possible solutions:
+a. gulp prod should copy all files within the server directory to a deploy directory and the frontend code is generated in deploy/build directory. This separates deployment files from development files. However, copying of the server/node_modules directory will take an unreasonable amount of time. Directory structure:
+/root
+  deploy/
+     build/
+        index.html (frontend files)
+        .
+     index.js (Server files)
+     .
+     .
+
+b. gulp prod generates the build folder inside the server folder instead of generating it at the root folder. The server directory can then be deployed. This would result in the mixing of deployment and development files. However, this seems to be the best solution now.
+/root
+  server/
+     build/
+        index.html (frontend files)
+        .
+     index.js (Server files)
+     .
+     .
+
+@loklak/loklak_developers what do you think?"
+gohugoio/hugo#9327,TF-IDF,5,pop-os/pop#62,False,0.1664772927761078,5,272,207,0.1664772927761078,0.24705207347869873,0.0036306765523633,"Can't right-click current directory in Nautilus List View (when scroll bars are present)
+When in List View in Nautilus I am unable to select the directory I'm currently on.
+Example:
+
+Select a directory with a lot of files.
+Change to list view and make sure a scrollbar appears
+Try to add a new directory to directory you are in using the right-click."
+gohugoio/hugo#9327,MiniLM,1,rails/rails#4820,False,0.530225396156311,499,1,2,0.07043197751045227,0.530225396156311,0.015663215930085926,"config.relative_url_root is not recognized in routes (3.2.1)
+When using config.relative_url_root = /subfolder, the generated routes are not having the prefix appended. I think that by using config.relative_url_root the routing should automatically place the prefix. It's not very elegant to have to repeat the subfolder by placing a scope :path => ""/subfolder"" do end in routes.rb."
+gohugoio/hugo#9327,MiniLM,2,hexojs/hexo#943,False,0.5032437443733215,6387,2,3,0.02798270247876644,0.5032437443733215,0.015330336190376118,"root not present for internal link in markdown
+_config.yml
+# URL
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: http://yoursite.com/child
+root: /child/
+...
+relative_link: true
+In a post:
+Link to [about](/about).
+EDIT: relative_link is set to true
+Link generated: http://yoursite.com/about
+Link expected:  http://yoursite.com/child/about
+Should we hack relative link (not starting with http(s)) to add root to them?
+Or there is swig helpers I should use for this?"
+gohugoio/hugo#9327,MiniLM,3,gohugoio/hugo#8523,True,0.4801892638206482,3,3,1,0.20943081378936768,0.4801892638206482,0.015873015873015872,"Add Permalink option for section pages
+I have something like the following option in the config.toml:
+[permalinks]
+posts = ""/new-posts/:filename/""
+
+If I visit http://localhost:1313/new-posts/post-name/ I get the intended page. But if I visit http://localhost:1313/new-posts/ I don't get the list page, as I would expect. Instead, I get nothing at all.  I still have to go to http://localhost:1313/posts/ to get the list page.
+The version I'm using:
+hugo v0.83.1+extended linux/amd64 BuildDate=unknown
+
+I'm not sure if this behavior is intended. But it would be a good idea to have the ability to change the URL of the list pages using the permalinks option as well. Right now, I have to add the url parameter in the front matter of the _index.md to make the list page have the different url."
+gohugoio/hugo#9327,MiniLM,4,mkdocs/mkdocs#1592,False,0.46874088048934937,64,4,4,0.10242080688476562,0.46874088048934937,0.015246975806451613,"Support absolute URLs to internal pages
+Background
+Version 1.0 no longer calculates filepaths back to the root. Where previously a Markdown link [exec](/ref/exec.md) might produce HTML with a computed path <a href=""../../../ref/exec/"">exec</a> it now simply replicates the path: <a href=""/ref/exec/"">exec</a>. While the documentation says this is unsupported (no link path should begin with a slash) this actually works fine with mkdocs serve. And it also works fine when the site is exported to a server root. But it fails if the site is exported to a child folder of the server root, e.g. docs.example.com/preview/.
+Use case
+MkDocs instance code.kx.com has about 250 pages. Because from time to time major sections are re-arranged, the internal links contain no paths that include ../. Paths are either to siblings, to descendants, or specified from the root. This allows major sections to be moved without rewriting the link filepaths.
+Currently we have 775 internal links beginning with slash, in 111 files. Upgrading to 1.0 would require us to convert all of them to relative paths.
+We would prefer to retain the paths from the site root, for the following benefits:
+
+Retain the mobility of larg"
+gohugoio/hugo#9327,MiniLM,5,hexojs/hexo#3410,False,0.4573473632335663,139,5,5,0.08890348672866821,0.4573473632335663,0.01486664089679165,"I want to change source themes scaffolds path, how can I configuration _config.yml
+Environment Info
+Node version(node -v): v6.9.5
+Your site _config.yml (Optional):
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+title: Hexo
+subtitle:
+description:
+keywords:
+author: John Doe
+language:
+timezone:
+
+# URL
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: http://yoursite.com/doc
+root: /doc/
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md # File name of new posts
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link: true # Open external links in new tab
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace:
+  
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: "
+gohugoio/hugo#9327,Weighted RRF,1,gohugoio/hugo#8523,True,0.015873015873015872,3,3,1,0.20943081378936768,0.4801892638206482,0.015873015873015872,"Add Permalink option for section pages
+I have something like the following option in the config.toml:
+[permalinks]
+posts = ""/new-posts/:filename/""
+
+If I visit http://localhost:1313/new-posts/post-name/ I get the intended page. But if I visit http://localhost:1313/new-posts/ I don't get the list page, as I would expect. Instead, I get nothing at all.  I still have to go to http://localhost:1313/posts/ to get the list page.
+The version I'm using:
+hugo v0.83.1+extended linux/amd64 BuildDate=unknown
+
+I'm not sure if this behavior is intended. But it would be a good idea to have the ability to change the URL of the list pages using the permalinks option as well. Right now, I have to add the url parameter in the front matter of the _index.md to make the list page have the different url."
+gohugoio/hugo#9327,Weighted RRF,2,rails/rails#4820,False,0.015663215930085926,499,1,2,0.07043197751045227,0.530225396156311,0.015663215930085926,"config.relative_url_root is not recognized in routes (3.2.1)
+When using config.relative_url_root = /subfolder, the generated routes are not having the prefix appended. I think that by using config.relative_url_root the routing should automatically place the prefix. It's not very elegant to have to repeat the subfolder by placing a scope :path => ""/subfolder"" do end in routes.rb."
+gohugoio/hugo#9327,Weighted RRF,3,hexojs/hexo#943,False,0.015330336190376118,6387,2,3,0.02798270247876644,0.5032437443733215,0.015330336190376118,"root not present for internal link in markdown
+_config.yml
+# URL
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: http://yoursite.com/child
+root: /child/
+...
+relative_link: true
+In a post:
+Link to [about](/about).
+EDIT: relative_link is set to true
+Link generated: http://yoursite.com/about
+Link expected:  http://yoursite.com/child/about
+Should we hack relative link (not starting with http(s)) to add root to them?
+Or there is swig helpers I should use for this?"
+gohugoio/hugo#9327,Weighted RRF,4,mkdocs/mkdocs#1592,False,0.015246975806451613,64,4,4,0.10242080688476562,0.46874088048934937,0.015246975806451613,"Support absolute URLs to internal pages
+Background
+Version 1.0 no longer calculates filepaths back to the root. Where previously a Markdown link [exec](/ref/exec.md) might produce HTML with a computed path <a href=""../../../ref/exec/"">exec</a> it now simply replicates the path: <a href=""/ref/exec/"">exec</a>. While the documentation says this is unsupported (no link path should begin with a slash) this actually works fine with mkdocs serve. And it also works fine when the site is exported to a server root. But it fails if the site is exported to a child folder of the server root, e.g. docs.example.com/preview/.
+Use case
+MkDocs instance code.kx.com has about 250 pages. Because from time to time major sections are re-arranged, the internal links contain no paths that include ../. Paths are either to siblings, to descendants, or specified from the root. This allows major sections to be moved without rewriting the link filepaths.
+Currently we have 775 internal links beginning with slash, in 111 files. Upgrading to 1.0 would require us to convert all of them to relative paths.
+We would prefer to retain the paths from the site root, for the following benefits:
+
+Retain the mobility of larg"
+gohugoio/hugo#9327,Weighted RRF,5,hexojs/hexo#3410,False,0.01486664089679165,139,5,5,0.08890348672866821,0.4573473632335663,0.01486664089679165,"I want to change source themes scaffolds path, how can I configuration _config.yml
+Environment Info
+Node version(node -v): v6.9.5
+Your site _config.yml (Optional):
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+title: Hexo
+subtitle:
+description:
+keywords:
+author: John Doe
+language:
+timezone:
+
+# URL
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: http://yoursite.com/doc
+root: /doc/
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md # File name of new posts
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link: true # Open external links in new tab
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace:
+  
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: "
+googlevr/cardboard#320,TF-IDF,1,googlevr/cardboard#238,False,0.3336281478404999,1,4,3,0.3336281478404999,0.5235725045204163,0.01566342213114754,"Screen Space : Overlay render mode not available with Google Cardboard XR plugin
+Hi,
+We have recently migrated our Unity application from using the GVR SDK to the Google Cardboard XR plugin as an underlying VR framework for our VR application, to resolve the VR render spinning in iOS issue.
+We have noticed that there is a difference in how these VR SDKs work,
+The Unity UI render modes available for GVR were Screen Space -Overlay, Screen Space :Camera and World Space, allowing the UI to be overlaid and followed around with the user's view/camera, placed in the camera's view frustum and be placed in the World space around the user respectively.
+However, in the Google Cardboard XR SDK, only Screen Space: Camera and World Space rendering modes, for the Unity UI to be rendered, are available.
+We would like to know whether there is any workaround available to include Screen Space : Overlay mode with Google Cardboard XR, so that we can overlay our UI in the user's view and also be able to render & interact with it in VR, or whether this is an expected behavior of the SDK.
+Thanks for the support."
+googlevr/cardboard#320,TF-IDF,2,googlevr/cardboard#216,False,0.3163177967071533,2,2,1,0.3163177967071533,0.548538863658905,0.016129032258064516,"Issue with google VR unity SDK in ios and Migration to cardboard-xr-plugin due to the same
+we are developing an app which gives the users an option to add VR content to the app by scanning respective QR codes and play the content by either downloading the video to the device or streaming it directly from the server.
+We have implemented these features too and when we started testing the VR content in the devices, its playing correctly in android devices. But in iOS devices with iOS version 14 or above, the video is continuously spinning when we open it in the video player.
+On further investigation we got to know that this issue is only there with the iOS devices with OS version 14 or above. in all the other devices with os Version 13 or lower, this issue is not there and we are able to play the video correctly.
+After checking multiple blogs and issues in github, we got to know that this issue is happening due to the error in the calibration of gyroscopic sensors in iOS 14 devices.
+and a temporary fix to the issue is to toggle the location services and restart the devices. This will reset the gyroscopic sensors But  the temp fix will only last for a few hours or even a few minutes.
+W"
+googlevr/cardboard#320,TF-IDF,3,firebase/firebase-android-sdk#1494,False,0.3101186752319336,3,31,27,0.3101186752319336,0.4025484025478363,0.011233211233211233,"Probability of occurrence in performace sdk 19.0.5
+from firebase Crashlytics console,I found some crash issue in performance sdk code,about 500+ everyday, crash rate 0.5% in my app,but i can't reproduce this issue, Probability of occurrence.
+below is the log,can anyone who kindly help me? my google service version is 17.0.0
+Fatal Exception: java.lang.NullPointerException
+Attempt to invoke virtual method 'void com.google.firebase.perf.internal.zzv.zzc(boolean)' on a null object reference
+com.google.firebase.perf.internal.zzf.zzd (com.google.firebase:firebase-perf@@19.0.5:170)
+com.google.firebase.perf.internal.zzi.run (com.google.firebase:firebase-perf@@19.0.5:2)
+java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1133)
+java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:607)
+java.lang.Thread.run (Thread.java:762)
+Fatal Exception: java.lang.IllegalStateException
+com.google.firebase.iid.FirebaseInstanceId.zzl (com.google.firebase:firebase-iid@@20.1.1:75)
+com.google.firebase.iid.FirebaseInstanceId.getId (com.google.firebase:firebase-iid@@20.1.1:49)
+com.google.firebase.perf.internal.zzf.zzbu (com.google.firebase:firebase-perf@@19.0.5:181)
+c"
+googlevr/cardboard#320,TF-IDF,4,googlevr/cardboard#128,False,0.2936866283416748,4,80,68,0.2936866283416748,0.3538786768913269,0.007566964285714286,"The Unity sample (HelloCardboard) works in Unity but is not in stereo
+The page
+https://developers.google.com/cardboard/develop/unity/quickstart
+describes how to build the basic HelloCardboard example. It also says the app shows you how to ""Render stereoscopic images by setting the correct distortion for each eye"". Where?
+When building it in Unity 2019.4.11f1 everything works with one exception: exactly the same image is rendered in both the left and right eyes. So there is no stereo. See the attached screenshot.
+
+What needs to be done to create a stereo view?
+Note that the equivalent page for building for the Android NDK (https://developers.google.com/cardboard/develop/c/quickstart) shows different images being rendered for each eye and therefore a stereo result.
+Is this a bug?
+Luke"
+googlevr/cardboard#320,TF-IDF,5,firebase/firebase-android-sdk#1454,False,0.2918281853199005,5,35,31,0.2918281853199005,0.39649713039398193,0.01076923076923077,"Fatal Exception: java.lang.IllegalStateException [Performance Monitoring]
+Multiple crashes on production:
+Fatal Exception: java.lang.IllegalStateException
+       at com.google.firebase.iid.FirebaseInstanceId.h(com.google.firebase:firebase-iid@@20.1.0:12)
+       at com.google.firebase.iid.FirebaseInstanceId.a(com.google.firebase:firebase-iid@@20.1.0:14)
+       at e.j.c.r.b.f.a(com.google.firebase:firebase-perf@@19.0.5:63)
+       at e.j.c.r.b.e.run(com.google.firebase:firebase-perf@@19.0.5:22)
+       at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1162)
+       at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:636)
+       at java.lang.Thread.run(Thread.java:764)
+
+I am not able to reproduce the issue on the live setup.
+This is occurring on all supported Android OS (5 to 9).
+Firebase Component: Performance Monitoring
+Version: 19.0.5
+I understand that 19.0.6 was released with an NPE fix. I am doubtful that upgrading to the latest will fix the issue."
+googlevr/cardboard#320,MiniLM,1,googlevr/cardboard#280,True,0.7224200963973999,1097,1,4,0.07679613679647446,0.7224200963973999,0.015616985703557816,"Google XR Plugin not working with Firebase Firestore
+Google XR Plugin no longer works with firestore in any version of unity, google xr plugin, or firestore. With only Firestore imported we get a proper working build. Then, with only Google XR plugin imported we get a working build. However, when you have both plugins imported and initialized, mobile build crashes on a black screen before unity splash screen.
+Steps to reproduce:
+
+Open a clean Unity project (the problem seems to persist in any version), set proper settings.
+Import Google XR plugin from UPM, set proper settings, add proper dependencies.
+Import Firebase Firestore, set proper settings, add proper dependencies.
+Open demo HelloVR scene.
+Build scene to android or IOS.
+
+Also, with both plugins imported and XR ""initialize on startup"" toggled, the app crashes before unity splash screen. However, you do not get a crash when it is toggled off, leading me to believe something is causing a hangup while initializing VR.
+This also only seems to be an issue with the firebase firestore. All other firebase plugins (in any combination) work and build properly with google xr plugin. This was also not an issue before trying to migrate t"
+googlevr/cardboard#320,MiniLM,2,googlevr/cardboard#216,False,0.548538863658905,2,2,1,0.3163177967071533,0.548538863658905,0.016129032258064516,"Issue with google VR unity SDK in ios and Migration to cardboard-xr-plugin due to the same
+we are developing an app which gives the users an option to add VR content to the app by scanning respective QR codes and play the content by either downloading the video to the device or streaming it directly from the server.
+We have implemented these features too and when we started testing the VR content in the devices, its playing correctly in android devices. But in iOS devices with iOS version 14 or above, the video is continuously spinning when we open it in the video player.
+On further investigation we got to know that this issue is only there with the iOS devices with OS version 14 or above. in all the other devices with os Version 13 or lower, this issue is not there and we are able to play the video correctly.
+After checking multiple blogs and issues in github, we got to know that this issue is happening due to the error in the calibration of gyroscopic sensors in iOS 14 devices.
+and a temporary fix to the issue is to toggle the location services and restart the devices. This will reset the gyroscopic sensors But  the temp fix will only last for a few hours or even a few minutes.
+W"
+googlevr/cardboard#320,MiniLM,3,firebase/firebase-android-sdk#1528,False,0.5324342846870422,13,3,2,0.23972071707248688,0.5324342846870422,0.015764296586214394,"IllegalStateException in FirebaseInstanceId
+[REQUIRED] Step 2: Describe your environment
+
+Android Studio version: Tried on both 3.6.3 and 4.0.0-beta05
+Firebase Component: Firebase IID (via messaging or installations
+Component version:
+We have direct deps on:
+
+FIREBASE_ANALYTICS = ""17.3.0""
+FIREBASE_MESSAGING = ""20.1.5""
+FIREBASE_PERF = ""19.0.6""
+FIREBASE_CRASHLYTICS = ""17.0.0-beta04""
+
+Firebase installations resolves to 16.2.1
+[REQUIRED] Step 3: Describe the problem
+We have a significant number of crash reports in crashlytics with this obfuscated stack trace:
+Fatal Exception: java.lang.IllegalStateException
+       at com.google.firebase.iid.FirebaseInstanceId.zzl(FirebaseInstanceId.java:70)
+       at com.google.firebase.iid.FirebaseInstanceId.getId(FirebaseInstanceId.java:48)
+       at com.google.firebase.perf.internal.zzf.zzbv(zzf.java:181)
+       at com.google.firebase.perf.internal.zzf.zzbu(zzf.java:44)
+       at com.google.firebase.perf.internal.zzf.zzc(zzf.java:195)
+       at com.google.firebase.perf.internal.zze.run(zze.java:2)
+       at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+       at java.util.concurrent.ThreadPoolExecutor$Worker.run(Thr"
+googlevr/cardboard#320,MiniLM,4,googlevr/cardboard#238,False,0.5235725045204163,1,4,3,0.3336281478404999,0.5235725045204163,0.01566342213114754,"Screen Space : Overlay render mode not available with Google Cardboard XR plugin
+Hi,
+We have recently migrated our Unity application from using the GVR SDK to the Google Cardboard XR plugin as an underlying VR framework for our VR application, to resolve the VR render spinning in iOS issue.
+We have noticed that there is a difference in how these VR SDKs work,
+The Unity UI render modes available for GVR were Screen Space -Overlay, Screen Space :Camera and World Space, allowing the UI to be overlaid and followed around with the user's view/camera, placed in the camera's view frustum and be placed in the World space around the user respectively.
+However, in the Google Cardboard XR SDK, only Screen Space: Camera and World Space rendering modes, for the Unity UI to be rendered, are available.
+We would like to know whether there is any workaround available to include Screen Space : Overlay mode with Google Cardboard XR, so that we can overlay our UI in the user's view and also be able to render & interact with it in VR, or whether this is an expected behavior of the SDK.
+Thanks for the support."
+googlevr/cardboard#320,MiniLM,5,fossasia/phimpme-android#2940,False,0.5153803825378418,16,5,5,0.19085603952407837,0.5153803825378418,0.01527327935222672,"App keeps crashing.
+When I install the app and try to launch it, the app opens and as soon as i go inside the app shuts down and a dialog box pops up stating that the app has stopped working.
+To Reproduce
+ Unfortunately, Phimp.me has stopped
+Expected behavior
+
+Logs
+
+Screenshots
+
+Smartphone Info:
+
+
+
+
+
+
+
+
+
+
+Device
+
+
+
+Android Version
+
+
+
+
+Additional context
+
+Would you like to work on the issue?
+
+
+ Yes
+[ ..] No
+Other:"
+googlevr/cardboard#320,Weighted RRF,1,googlevr/cardboard#216,False,0.016129032258064516,2,2,1,0.3163177967071533,0.548538863658905,0.016129032258064516,"Issue with google VR unity SDK in ios and Migration to cardboard-xr-plugin due to the same
+we are developing an app which gives the users an option to add VR content to the app by scanning respective QR codes and play the content by either downloading the video to the device or streaming it directly from the server.
+We have implemented these features too and when we started testing the VR content in the devices, its playing correctly in android devices. But in iOS devices with iOS version 14 or above, the video is continuously spinning when we open it in the video player.
+On further investigation we got to know that this issue is only there with the iOS devices with OS version 14 or above. in all the other devices with os Version 13 or lower, this issue is not there and we are able to play the video correctly.
+After checking multiple blogs and issues in github, we got to know that this issue is happening due to the error in the calibration of gyroscopic sensors in iOS 14 devices.
+and a temporary fix to the issue is to toggle the location services and restart the devices. This will reset the gyroscopic sensors But  the temp fix will only last for a few hours or even a few minutes.
+W"
+googlevr/cardboard#320,Weighted RRF,2,firebase/firebase-android-sdk#1528,False,0.015764296586214394,13,3,2,0.23972071707248688,0.5324342846870422,0.015764296586214394,"IllegalStateException in FirebaseInstanceId
+[REQUIRED] Step 2: Describe your environment
+
+Android Studio version: Tried on both 3.6.3 and 4.0.0-beta05
+Firebase Component: Firebase IID (via messaging or installations
+Component version:
+We have direct deps on:
+
+FIREBASE_ANALYTICS = ""17.3.0""
+FIREBASE_MESSAGING = ""20.1.5""
+FIREBASE_PERF = ""19.0.6""
+FIREBASE_CRASHLYTICS = ""17.0.0-beta04""
+
+Firebase installations resolves to 16.2.1
+[REQUIRED] Step 3: Describe the problem
+We have a significant number of crash reports in crashlytics with this obfuscated stack trace:
+Fatal Exception: java.lang.IllegalStateException
+       at com.google.firebase.iid.FirebaseInstanceId.zzl(FirebaseInstanceId.java:70)
+       at com.google.firebase.iid.FirebaseInstanceId.getId(FirebaseInstanceId.java:48)
+       at com.google.firebase.perf.internal.zzf.zzbv(zzf.java:181)
+       at com.google.firebase.perf.internal.zzf.zzbu(zzf.java:44)
+       at com.google.firebase.perf.internal.zzf.zzc(zzf.java:195)
+       at com.google.firebase.perf.internal.zze.run(zze.java:2)
+       at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+       at java.util.concurrent.ThreadPoolExecutor$Worker.run(Thr"
+googlevr/cardboard#320,Weighted RRF,3,googlevr/cardboard#238,False,0.01566342213114754,1,4,3,0.3336281478404999,0.5235725045204163,0.01566342213114754,"Screen Space : Overlay render mode not available with Google Cardboard XR plugin
+Hi,
+We have recently migrated our Unity application from using the GVR SDK to the Google Cardboard XR plugin as an underlying VR framework for our VR application, to resolve the VR render spinning in iOS issue.
+We have noticed that there is a difference in how these VR SDKs work,
+The Unity UI render modes available for GVR were Screen Space -Overlay, Screen Space :Camera and World Space, allowing the UI to be overlaid and followed around with the user's view/camera, placed in the camera's view frustum and be placed in the World space around the user respectively.
+However, in the Google Cardboard XR SDK, only Screen Space: Camera and World Space rendering modes, for the Unity UI to be rendered, are available.
+We would like to know whether there is any workaround available to include Screen Space : Overlay mode with Google Cardboard XR, so that we can overlay our UI in the user's view and also be able to render & interact with it in VR, or whether this is an expected behavior of the SDK.
+Thanks for the support."
+googlevr/cardboard#320,Weighted RRF,4,googlevr/cardboard#280,True,0.015616985703557816,1097,1,4,0.07679613679647446,0.7224200963973999,0.015616985703557816,"Google XR Plugin not working with Firebase Firestore
+Google XR Plugin no longer works with firestore in any version of unity, google xr plugin, or firestore. With only Firestore imported we get a proper working build. Then, with only Google XR plugin imported we get a working build. However, when you have both plugins imported and initialized, mobile build crashes on a black screen before unity splash screen.
+Steps to reproduce:
+
+Open a clean Unity project (the problem seems to persist in any version), set proper settings.
+Import Google XR plugin from UPM, set proper settings, add proper dependencies.
+Import Firebase Firestore, set proper settings, add proper dependencies.
+Open demo HelloVR scene.
+Build scene to android or IOS.
+
+Also, with both plugins imported and XR ""initialize on startup"" toggled, the app crashes before unity splash screen. However, you do not get a crash when it is toggled off, leading me to believe something is causing a hangup while initializing VR.
+This also only seems to be an issue with the firebase firestore. All other firebase plugins (in any combination) work and build properly with google xr plugin. This was also not an issue before trying to migrate t"
+googlevr/cardboard#320,Weighted RRF,5,fossasia/phimpme-android#2940,False,0.01527327935222672,16,5,5,0.19085603952407837,0.5153803825378418,0.01527327935222672,"App keeps crashing.
+When I install the app and try to launch it, the app opens and as soon as i go inside the app shuts down and a dialog box pops up stating that the app has stopped working.
+To Reproduce
+ Unfortunately, Phimp.me has stopped
+Expected behavior
+
+Logs
+
+Screenshots
+
+Smartphone Info:
+
+
+
+
+
+
+
+
+
+
+Device
+
+
+
+Android Version
+
+
+
+
+Additional context
+
+Would you like to work on the issue?
+
+
+ Yes
+[ ..] No
+Other:"
+supabase/auth#1057,TF-IDF,1,Plume-org/Plume#636,False,0.44113221764564514,1,2,1,0.44113221764564514,0.5379256010055542,0.016142252776308832,"Send confirmation email after registering
+Is your feature request related to a problem? Please describe.
+
+You can't be sure that the email you used to register was correct
+Spammers can create a lot of accounts very easily
+Someone else can use your email (even if I don't know why anyone would do that?)
+
+Describe the solution you'd like
+Send a confirmation email when creating an account.
+Accounts created from the CLI should probably be immediately confirmed.
+Describe alternatives you've considered
+Additional context
+From #635"
+supabase/auth#1057,TF-IDF,2,novus/nvd3#976,False,0.36703410744667053,2,997,509,0.36703410744667053,0.10248862206935883,0.0017052217169713439,"yAxis min becomes -1 when all points' y values are 0 (stackedAreaChart)
+Not sure if this is intentional, but the behavior seems odd, since the default is to always show the yAxis starting at 0, even when some (but not all) points' y values are 0.
+See Plunk:
+http://plnkr.co/edit/umasgIoekdoWcVjvigHM?p=preview
+Seems like it's a result of stackedArea's dependence on scatter:
+        // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
+        if (x.domain()[0] === x.domain()[1] || y.domain()[0] === y.domain()[1]) singlePoint = true;
+        if (x.domain()[0] === x.domain()[1])
+            x.domain()[0] ?
+                x.domain([x.domain()[0] - x.domain()[0] * 0.01, x.domain()[1] + x.domain()[1] * 0.01])
+                : x.domain([-1,1]);
+
+        if (y.domain()[0] === y.domain()[1])
+            y.domain()[0] ?
+                y.domain([y.domain()[0] - y.domain()[0] * 0.01, y.domain()[1] + y.domain()[1] * 0.01])
+                : y.domain([-1,1]);
+
+        if ( isNaN(x.domain()[0])) {
+            x.domain([-1,1]);
+        }
+
+        if ( isNaN(y.domain()[0])) {
+            y.domain([-1,1]);
+        }
+
+This line in particular"
+supabase/auth#1057,TF-IDF,3,consuldemocracy/consuldemocracy#2499,False,0.36645185947418213,3,58,51,0.36645185947418213,0.27741169929504395,0.008844498251277913,"Let managers update a user's email
+What we need
+At /management/account the manager should be able to update the email to a user account.
+
+Shows user's email or ""No-email user"".
+For ""change user"" red color link you can use delete CSS class.
+In the edit form, the document type and number fields can be disabled.
+
+Notes
+Beware some users might not even have an email.
+Screenshots
+Info shows ""email"" and ""edit user"" button
+
+New form to change email"
+supabase/auth#1057,TF-IDF,4,userfrosting/UserFrosting#763,False,0.3148932158946991,4,3,2,0.3148932158946991,0.5267700552940369,0.01586061507936508,"Creating new User requires Email support
+When creating a user in the admin dashboard UF currently enforces the use of email. If your config is missing or incorrect the creation of the user fails. This can be an issue for development as the developer may have chosen to not setup email support. I do this frequently for a few reasons.
+Solution
+Allow the user to be created with an option to not send an email. In which case a random password would be generated. A second possible solution, if email was opted out, create the user and leave the password blank. The user would remain inactive and the admin would have to manually (re)set the password and then enable the user.
+This would of course leave 'flag_verified' as negative and flag_enabled as negative to start. However, if email was opted out, simply mark 'flag_verified' as 1 for true. Manually enabling the account would set the 'flag_disabled' to 1.
+This would allow for for expansion into a 'customer' type model or simply easier on the developer lol."
+supabase/auth#1057,TF-IDF,5,tdryer/hangups#350,False,0.30868422985076904,5,4,4,0.30868422985076904,0.43132007122039795,0.01561298076923077,"Support for Google provided email accounts (i.e. myusername@myuniversity.edu)
+I'm attempting to login with my Google-provided account. The domain-name part of the address is not gmail.com but rather my organization's domain name. Is there support for this and I'm just missing something?"
+supabase/auth#1057,MiniLM,1,supabase/auth#211,True,0.590144157409668,646,1,3,0.1092136949300766,0.590144157409668,0.01564459202154832,Support a denylist to block non-existent or abusive domain signups
+supabase/auth#1057,MiniLM,2,Plume-org/Plume#636,False,0.5379256010055542,1,2,1,0.44113221764564514,0.5379256010055542,0.016142252776308832,"Send confirmation email after registering
+Is your feature request related to a problem? Please describe.
+
+You can't be sure that the email you used to register was correct
+Spammers can create a lot of accounts very easily
+Someone else can use your email (even if I don't know why anyone would do that?)
+
+Describe the solution you'd like
+Send a confirmation email when creating an account.
+Accounts created from the CLI should probably be immediately confirmed.
+Describe alternatives you've considered
+Additional context
+From #635"
+supabase/auth#1057,MiniLM,3,userfrosting/UserFrosting#763,False,0.5267700552940369,4,3,2,0.3148932158946991,0.5267700552940369,0.01586061507936508,"Creating new User requires Email support
+When creating a user in the admin dashboard UF currently enforces the use of email. If your config is missing or incorrect the creation of the user fails. This can be an issue for development as the developer may have chosen to not setup email support. I do this frequently for a few reasons.
+Solution
+Allow the user to be created with an option to not send an email. In which case a random password would be generated. A second possible solution, if email was opted out, create the user and leave the password blank. The user would remain inactive and the admin would have to manually (re)set the password and then enable the user.
+This would of course leave 'flag_verified' as negative and flag_enabled as negative to start. However, if email was opted out, simply mark 'flag_verified' as 1 for true. Manually enabling the account would set the 'flag_disabled' to 1.
+This would allow for for expansion into a 'customer' type model or simply easier on the developer lol."
+supabase/auth#1057,MiniLM,4,tdryer/hangups#350,False,0.43132007122039795,5,4,4,0.30868422985076904,0.43132007122039795,0.01561298076923077,"Support for Google provided email accounts (i.e. myusername@myuniversity.edu)
+I'm attempting to login with my Google-provided account. The domain-name part of the address is not gmail.com but rather my organization's domain name. Is there support for this and I'm just missing something?"
+supabase/auth#1057,MiniLM,5,DMOJ/online-judge#382,False,0.42698419094085693,443,5,5,0.11953936517238617,0.42698419094085693,0.014714788193913442,Opt-in to mailing list on registration
+supabase/auth#1057,Weighted RRF,1,Plume-org/Plume#636,False,0.016142252776308832,1,2,1,0.44113221764564514,0.5379256010055542,0.016142252776308832,"Send confirmation email after registering
+Is your feature request related to a problem? Please describe.
+
+You can't be sure that the email you used to register was correct
+Spammers can create a lot of accounts very easily
+Someone else can use your email (even if I don't know why anyone would do that?)
+
+Describe the solution you'd like
+Send a confirmation email when creating an account.
+Accounts created from the CLI should probably be immediately confirmed.
+Describe alternatives you've considered
+Additional context
+From #635"
+supabase/auth#1057,Weighted RRF,2,userfrosting/UserFrosting#763,False,0.01586061507936508,4,3,2,0.3148932158946991,0.5267700552940369,0.01586061507936508,"Creating new User requires Email support
+When creating a user in the admin dashboard UF currently enforces the use of email. If your config is missing or incorrect the creation of the user fails. This can be an issue for development as the developer may have chosen to not setup email support. I do this frequently for a few reasons.
+Solution
+Allow the user to be created with an option to not send an email. In which case a random password would be generated. A second possible solution, if email was opted out, create the user and leave the password blank. The user would remain inactive and the admin would have to manually (re)set the password and then enable the user.
+This would of course leave 'flag_verified' as negative and flag_enabled as negative to start. However, if email was opted out, simply mark 'flag_verified' as 1 for true. Manually enabling the account would set the 'flag_disabled' to 1.
+This would allow for for expansion into a 'customer' type model or simply easier on the developer lol."
+supabase/auth#1057,Weighted RRF,3,supabase/auth#211,True,0.01564459202154832,646,1,3,0.1092136949300766,0.590144157409668,0.01564459202154832,Support a denylist to block non-existent or abusive domain signups
+supabase/auth#1057,Weighted RRF,4,tdryer/hangups#350,False,0.01561298076923077,5,4,4,0.30868422985076904,0.43132007122039795,0.01561298076923077,"Support for Google provided email accounts (i.e. myusername@myuniversity.edu)
+I'm attempting to login with my Google-provided account. The domain-name part of the address is not gmail.com but rather my organization's domain name. Is there support for this and I'm just missing something?"
+supabase/auth#1057,Weighted RRF,5,DMOJ/online-judge#382,False,0.014714788193913442,443,5,5,0.11953936517238617,0.42698419094085693,0.014714788193913442,Opt-in to mailing list on registration
