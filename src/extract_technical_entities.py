@@ -3,6 +3,7 @@ import argparse
 import json
 import re
 from collections import Counter
+import time
 
 import pandas as pd
 from pathlib import Path
@@ -19,9 +20,9 @@ PATTERNS = {
     ),
 
     "qualified_identifiers": re.compile(
-        r"\b(?:[A-Za-z_$][\w$]*\.){2,}"
-        r"[A-Za-z_$][\w$]*\b"
-    ),
+    r"\b(?:[A-Za-z_$][A-Za-z0-9_$]{0,63}\.){2,8}"
+    r"[A-Za-z_$][A-Za-z0-9_$]{0,63}\b"
+),
 
     "file_names": re.compile(
         r"\b[\w.-]+\."
@@ -35,9 +36,12 @@ PATTERNS = {
     ),
 
     "config_keys": re.compile(
-        r"\b(?:[a-z]+(?:_[a-z0-9]+)+|"
-        r"[a-z]+(?:[A-Z][a-zA-Z0-9]*)+)\b"
-    ),
+    r"\b(?:"
+    r"[a-z][a-z0-9]{0,63}(?:_[a-z0-9]{1,64}){1,8}"
+    r"|"
+    r"[a-z][a-z0-9]{0,63}(?:[A-Z][a-z0-9]{0,63}){1,8}"
+    r")\b"
+),
 
     "http_codes": re.compile(
         r"\bHTTP\s+[45]\d{2}\b",
@@ -63,11 +67,23 @@ def clean_text(text):
 
 def extract_entities(text):
     text = clean_text(text)
-
     entities = {}
 
     for category, pattern in PATTERNS.items():
+        start = time.perf_counter()
+
         matches = pattern.findall(text)
+
+        elapsed = time.perf_counter() - start
+
+        if elapsed > 0.5:
+            print(
+                f"[SLOW REGEX] "
+                f"category={category}, "
+                f"seconds={elapsed:.2f}, "
+                f"text_length={len(text)}",
+                flush=True,
+            )
 
         normalized = {
             re.sub(r"\s+", "", match).lower()
