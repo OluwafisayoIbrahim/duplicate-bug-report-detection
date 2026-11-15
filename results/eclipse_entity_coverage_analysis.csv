@@ -1,0 +1,3 @@
+query_has_entities,queries,improved,regressed,unchanged,baseline_mrr,entity_mrr,mean_delta_rr,mean_best_duplicate_jaccard
+False,694,0,0,694,0.3414657933675831,0.3414657933675831,0.0,0.0
+True,702,97,71,534,0.38881006280731284,0.40564120737199433,0.016831144564681523,0.2543534278380529
