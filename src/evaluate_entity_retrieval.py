@@ -66,16 +66,16 @@ def build_entity_set(text):
     return tokens
 
 
-def load_entities(issues):
+def load_entities(issues, dataset="eclipse"):
     ENTITY_CACHE.mkdir(
         parents=True,
         exist_ok=True,
     )
 
     cache_path = (
-        ENTITY_CACHE
-        / f"{DATASET}_entities_v1.json"
-    )
+    ENTITY_CACHE
+    / f"{dataset}_entities_v1.json"
+)
 
     ids = issues["issue_id"].astype(str).tolist()
 
