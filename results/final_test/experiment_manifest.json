@@ -1,0 +1,7 @@
+{
+  "experiment": "duplicate_bug_report_final_test",
+  "configuration": "configs\\final_test.json",
+  "configuration_sha256": "ef05f3bed51bd4124460b838498fca8665599e361e4ce8a7c6215558b588d978",
+  "status": "preflight_passed",
+  "test_evaluation_executed": false
+}
