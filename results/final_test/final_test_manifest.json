@@ -1,0 +1,53 @@
+{
+  "experiment": "duplicate_bug_report_final_test",
+  "config_sha256": "ef05f3bed51bd4124460b838498fca8665599e361e4ce8a7c6215558b588d978",
+  "git_revision": "e387413d58b7dba7a3995853d3292dc21db0eba6",
+  "status": "test_evaluation_completed",
+  "audits": {
+    "eclipse": {
+      "dataset": "eclipse",
+      "total_reports": 85155,
+      "development_reports": 68124,
+      "test_period_reports": 17031,
+      "eligible_test_queries": 2174,
+      "test_cutoff": "2008-05-01 16:09:00+00:00"
+    },
+    "issuedupes": {
+      "dataset": "issuedupes",
+      "total_reports": 19094,
+      "development_reports": 15275,
+      "test_period_reports": 3819,
+      "eligible_test_queries": 2258,
+      "test_cutoff": "2023-01-27 17:52:25+00:00",
+      "same_repo_covered": 2258,
+      "same_repo_uncovered": 0,
+      "same_repo_coverage_rate": 1.0,
+      "mean_same_repo_candidates": 14.29185119574845,
+      "uncovered_query_ids": []
+    }
+  },
+  "datasets": {
+    "eclipse": {
+      "dataset": "eclipse",
+      "model_path": "models/eclipse_minilm_pilot/final",
+      "model_sha256": "13f2fce5340cab6eb4efc943a8d56234bcaa33780e12419aafc110bffeac94a4",
+      "embedding_cache": "models\\final_test_cache\\eclipse_test_embeddings.npy",
+      "embedding_sha256": "c13d5cfd56010eaf8669360b39c07fe82a48c8cf5a45f3d2924a9faeee8cd54a",
+      "test_cutoff": "2008-05-01 16:09:00+00:00",
+      "fitting_reports": 68124,
+      "issues_sha256": "fe716afce1ef0a36a8d6a3aa362d338ddce44674a0f3743aa8236c6e872015db",
+      "links_sha256": "a21823ffe866132edbb261107d9c9f781e67baf77cbd5c99bdf9082ab16023e3"
+    },
+    "issuedupes": {
+      "dataset": "issuedupes",
+      "model_path": "models/issuedupes_minilm_pilot/final",
+      "model_sha256": "55334a6d283d27b1e12814a8a3bbedbe352dc912fa8539500f5928dcdab40f06",
+      "embedding_cache": "models\\final_test_cache\\issuedupes_test_embeddings.npy",
+      "embedding_sha256": "e0db44689ee955d0b68ad566d36615bfeee9b3ac39e840a0ce52712aeff3374d",
+      "test_cutoff": "2023-01-27 17:52:25+00:00",
+      "fitting_reports": 15275,
+      "issues_sha256": "62d89ea49ee2aa033dc628fb9f987b54ee0e5f15fb5300ebcc7a3fcfaf35a3af",
+      "links_sha256": "f0ac8b95ee79134e7f7f77f39dac3a4c85ef32d8dc777fa06e5f9c60ad22dd7c"
+    }
+  }
+}
